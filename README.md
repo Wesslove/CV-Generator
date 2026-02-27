@@ -18,7 +18,8 @@ Ce repo est devenu un petit générateur de CV en React. L'interface se compose 
 ### Utilisation
 1. Remplissez les champs du formulaire. Les champs **Nom**, **Titre professionnel** et **Email** sont requis.
 1.5 Ajoutez une ou plusieurs photos (portrait, logo, etc.) via le champ "Photos".
-2. L'aperçu se met à jour automatiquement, y compris les vignettes d'images.
+1.6 complétez vos **loisirs / centres d'intérêt** dans la section dédiée (ou laissez-les vides si vous n'en avez pas).
+2. L'aperçu se met à jour automatiquement, y compris les vignettes d'images et la liste des loisirs.
 3. Pour obtenir un PDF, cliquez sur **Télécharger en PDF** dans la prévisualisation ou utilisez la fonction d'impression du navigateur (Ctrl+P). Le formulaire est masqué lors de l'impression.
 
 ### Prolongements possibles

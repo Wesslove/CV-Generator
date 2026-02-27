@@ -63,6 +63,17 @@ function ClassicTemplate({ cv }) {
               ))}
             </section>
           )}
+
+          {cv.hobbies && cv.hobbies.length > 0 && (
+            <section>
+              <h3 className="classic-section-title">Loisirs</h3>
+              <ul className="hobbies-list">
+                {cv.hobbies.map((h) => (
+                  <li key={h.id}>{h.name}</li>
+                ))}
+              </ul>
+            </section>
+          )}
         </aside>
 
         {/* Colonne droite */}
@@ -183,6 +194,19 @@ function ModernTemplate({ cv }) {
                 ))}
               </section>
             )}
+
+            {cv.hobbies && cv.hobbies.length > 0 && (
+              <section className="modern-section">
+                <h3 className="modern-section-title">
+                  <span className="msec-icon">🎯</span> Loisirs
+                </h3>
+                <ul className="hobbies-list">
+                  {cv.hobbies.map((h) => (
+                    <li key={h.id}>{h.name}</li>
+                  ))}
+                </ul>
+              </section>
+            )}
           </div>
 
           <div className="modern-right">
@@ -274,6 +298,17 @@ function MinimalTemplate({ cv }) {
                 <div key={l.id} className="min-skill">
                   <span>{l.name}</span>
                   <span className="min-level-text">{l.level}</span>
+                </div>
+              ))}
+            </section>
+          )}
+
+          {cv.hobbies && cv.hobbies.length > 0 && (
+            <section className="min-section">
+              <h3>Loisirs</h3>
+              {cv.hobbies.map((h) => (
+                <div key={h.id} className="min-skill">
+                  <span>{h.name}</span>
                 </div>
               ))}
             </section>
@@ -371,6 +406,16 @@ function ExecutiveTemplate({ cv }) {
                 <span>{l.name}</span>
                 <span className="exec-lang-level">{l.level}</span>
               </div>
+            ))}
+          </div>
+        )}
+
+        {/* Loisirs */}
+        {cv.hobbies && cv.hobbies.length > 0 && (
+          <div className="exec-sidebar-section">
+            <div className="exec-sidebar-title">Loisirs</div>
+            {cv.hobbies.map((h) => (
+              <div key={h.id} className="exec-lang-item">{h.name}</div>
             ))}
           </div>
         )}

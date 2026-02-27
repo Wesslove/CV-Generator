@@ -449,6 +449,22 @@ body {
 .modern-lang { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
 .lang-badge { font-size: 11px; background: #e0f2fe; color: #0369a1; padding: 2px 7px; border-radius: 10px; font-weight: 600; }
 
+/* styles pour la liste de loisirs */
+.hobbies-list {
+  list-style: none;
+  padding: 0;
+  margin: 6px 0 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.hobbies-list li {
+  font-size: 13px;
+  background: var(--input-bg);
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
 .modern-entry { margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
 .modern-entry:last-child { border-bottom: none; }
 .modern-entry-header { display: flex; justify-content: space-between; gap: 8px; }

@@ -17,6 +17,7 @@ const initialCv = {
   educations: [],
   skills: [],
   languages: [],
+  hobbies: [],      // nouvelle section pour loisirs
   template: "classic"
 }
 

@@ -1,4 +1,5 @@
 // CVForm.jsx – formulaire complet avec sections dynamiques
+// inclut maintenant également une section "Loisirs" (hobbies)
 import React, { useState } from "react"
 
 const SKILL_LEVELS = ["Notions", "Débutant", "Intermédiaire", "Avancé", "Expert"]
@@ -239,6 +240,38 @@ export default function CVForm({ cvData, onChange, onPhoto, onAdd, onUpdate, onR
                     ))}
                   </select>
                   <RemoveBtn onClick={() => onRemove("languages", lang.id)} />
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* ── Loisirs ── */}
+      <div className={`accordion ${openSection === "hobbies" ? "open" : ""}`}>
+        <button className="accordion-trigger" onClick={() => toggle("hobbies") }>
+          <span>🎯 Loisirs <em>({cvData.hobbies.length})</em></span>
+          <span className="accordion-arrow">{openSection === "hobbies" ? "▲" : "▼"}</span>
+        </button>
+        {openSection === "hobbies" && (
+          <div className="accordion-body">
+            <SectionHeader
+              title="" icon=""
+              onAdd={() => onAdd("hobbies", { name: "" })}
+              addLabel="Ajouter un loisir"
+            />
+            {cvData.hobbies.length === 0 && <p className="empty-hint">Aucun loisir ajouté.</p>}
+            <div className="skills-list">
+              {cvData.hobbies.map((h) => (
+                <div key={h.id} className="skill-row">
+                  <input
+                    className="skill-input"
+                    type="text"
+                    value={h.name}
+                    onChange={(e) => onUpdate("hobbies", h.id, "name", e.target.value)}
+                    placeholder="Ex : Photographie, Randonnée..."
+                  />
+                  <RemoveBtn onClick={() => onRemove("hobbies", h.id)} />
                 </div>
               ))}
             </div>
