@@ -110,6 +110,7 @@ export const I18N = {
     // Errors
     errName: "Le nom est requis", errTitle: "Le titre est requis",
     errEmail: "Email invalide",
+    edit: 'Éditer', preview: 'Aperçu',
     // Import warning
     importPhotoWarning: "⚠️ La photo n'est pas incluse dans le fichier JSON et devra être rajoutée manuellement.",
     // Template labels in CV
@@ -167,6 +168,7 @@ export const I18N = {
     noSkill: "No skill added.", noLang: "No language added.", noHobby: "No hobby added.",
     errName: "Name is required", errTitle: "Title is required",
     errEmail: "Invalid email",
+    edit: 'Edit', preview: 'Preview',
     importPhotoWarning: "⚠️ The photo is not included in the JSON file and will need to be added manually.",
     tplProfile: "Profile", tplExp: "Experience", tplEdu: "Education",
     tplSkills: "Skills", tplLangs: "Languages", tplCerts: "Certifications",
@@ -298,7 +300,7 @@ export default function App() {
   }
 
   const { score, checks } = computeCompletion(cvData)
-  const TEMPLATES = ["classic", "modern", "minimal", "executive", "creative", "timeline"]
+  const TEMPLATES = ["classic", "modern", "minimal", "executive", "creative", "timeline", "rouge"]
   const hasErrors = Object.keys(errors).length > 0
 
   return (

@@ -15,7 +15,7 @@ function SkillBar({ level }) {
 }
 
 // ── Shared sub-components ────────────────────────────────────
-function CertsList({ certs, titleClass }) {
+function CertsList({ certs, titleClass, t }) {
   if (!certs || certs.length === 0) return null
   return (
     <section>
@@ -33,7 +33,7 @@ function CertsList({ certs, titleClass }) {
   )
 }
 
-function ProjectsList({ projects, titleClass }) {
+function ProjectsList({ projects, titleClass, t }) {
   if (!projects || projects.length === 0) return null
   return (
     <section>
@@ -99,7 +99,7 @@ function ClassicTemplate({ cv, t }) {
             </section>
           )}
           {cv.certifications && cv.certifications.length > 0 && (
-            <CertsList certs={cv.certifications} titleClass="classic-section-title" />
+            <CertsList certs={cv.certifications} titleClass="classic-section-title" t={t} />
           )}
           {cv.hobbies && cv.hobbies.length > 0 && (
             <section>
@@ -155,7 +155,7 @@ function ClassicTemplate({ cv, t }) {
             </section>
           )}
           {cv.projects && cv.projects.length > 0 && (
-            <ProjectsList projects={cv.projects} titleClass="classic-section-title main-title" />
+            <ProjectsList projects={cv.projects} titleClass="classic-section-title main-title" t={t} />
           )}
         </div>
       </div>
@@ -537,7 +537,7 @@ function CreativeTemplate({ cv, t }) {
         <aside className="creative-aside">
           {cv.skills.length > 0 && (
             <section className="creative-section">
-              <div className="creative-sec-label">Skills</div>
+              <div className="creative-sec-label">{t("tplSkills")}</div>
               {cv.skills.map((s) => (
                 <div key={s.id} className="creative-skill-item">
                   <div className="creative-skill-top">
@@ -586,7 +586,7 @@ function CreativeTemplate({ cv, t }) {
         <div className="creative-main">
           {cv.summary && (
             <section className="creative-main-section">
-              <div className="creative-main-label">À propos</div>
+              <div className="creative-main-label">{t("tplProfile")}</div>
               <p className="creative-summary">{cv.summary}</p>
             </section>
           )}
@@ -749,6 +749,179 @@ function TimelineTemplate({ cv, t }) {
   )
 }
 
+
+// ────────────────────────────────────────────────────────────
+// TEMPLATE ROUGE
+// ────────────────────────────────────────────────────────────
+function RougeTemplate({ cv, t }) {
+  const initials = cv.name
+    ? cv.name.split(" ").map(n => n[0]).slice(0,2).join("").toUpperCase()
+    : null
+
+  // Check if aside has any content
+  const hasAside = cv.skills.length > 0 || cv.languages.length > 0
+    || (cv.certifications && cv.certifications.length > 0)
+    || (cv.hobbies && cv.hobbies.length > 0)
+
+  return (
+    <div className="tpl-rouge">
+      {/* ── Header ── */}
+      <header className="rouge-header">
+        <div className="rouge-header-left">
+          <div className="rouge-name">{cv.name || "Votre Nom"}</div>
+          <div className="rouge-title">{cv.title || "Titre Professionnel"}</div>
+          {cv.summary && <p className="rouge-summary">{cv.summary}</p>}
+        </div>
+        <div className="rouge-header-right">
+          {cv.photo ? (
+            <img src={cv.photo} alt="Photo" className="rouge-photo" />
+          ) : initials ? (
+            <div className="rouge-initials">{initials}</div>
+          ) : (
+            <div className="rouge-initials rouge-initials-empty">
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+              </svg>
+            </div>
+          )}
+        </div>
+      </header>
+
+      {/* ── Barre de contacts ── */}
+      <div className="rouge-contact-bar">
+        {cv.phone    && <span className="rouge-contact-item"><span className="rouge-contact-icon">T</span>{cv.phone}</span>}
+        {cv.email    && <span className="rouge-contact-item"><span className="rouge-contact-icon">@</span>{cv.email}</span>}
+        {cv.location && <span className="rouge-contact-item"><span className="rouge-contact-icon">L</span>{cv.location}</span>}
+        {cv.linkedin && <span className="rouge-contact-item"><span className="rouge-contact-icon">in</span>{cv.linkedin}</span>}
+      </div>
+
+      {/* ── Corps ── */}
+      <div className="rouge-body">
+        {/* Colonne principale */}
+        <div className="rouge-main">
+          {cv.experiences.length > 0 && (
+            <section className="rouge-section">
+              <div className="rouge-section-title">
+                <span className="rouge-section-line" />
+                {t("tplExp")}
+              </div>
+              {cv.experiences.map((exp) => (
+                <div key={exp.id} className="rouge-entry">
+                  <div className="rouge-entry-left">
+                    <div className="rouge-entry-period">{exp.period}</div>
+                    <div className="rouge-entry-dot" />
+                  </div>
+                  <div className="rouge-entry-right">
+                    <div className="rouge-entry-role">{exp.role || "Poste"}</div>
+                    <div className="rouge-entry-company">{exp.company}</div>
+                    {exp.description && <p className="rouge-entry-desc">{exp.description}</p>}
+                  </div>
+                </div>
+              ))}
+            </section>
+          )}
+
+          {cv.educations.length > 0 && (
+            <section className="rouge-section">
+              <div className="rouge-section-title">
+                <span className="rouge-section-line" />
+                {t("tplEdu")}
+              </div>
+              {cv.educations.map((edu) => (
+                <div key={edu.id} className="rouge-entry">
+                  <div className="rouge-entry-left">
+                    <div className="rouge-entry-period">{edu.period}</div>
+                    <div className="rouge-entry-dot" />
+                  </div>
+                  <div className="rouge-entry-right">
+                    <div className="rouge-entry-role">{edu.degree || "Diplôme"}</div>
+                    <div className="rouge-entry-company">{edu.school}</div>
+                    {edu.description && <p className="rouge-entry-desc">{edu.description}</p>}
+                  </div>
+                </div>
+              ))}
+            </section>
+          )}
+
+          {cv.projects && cv.projects.length > 0 && (
+            <section className="rouge-section">
+              <div className="rouge-section-title">
+                <span className="rouge-section-line" />
+                {t("tplProjects")}
+              </div>
+              {cv.projects.map((p) => (
+                <div key={p.id} className="rouge-entry">
+                  <div className="rouge-entry-left">
+                    {p.stack && <div className="rouge-entry-period">{p.stack}</div>}
+                    <div className="rouge-entry-dot" />
+                  </div>
+                  <div className="rouge-entry-right">
+                    <div className="rouge-entry-role">{p.name}</div>
+                    {p.description && <p className="rouge-entry-desc">{p.description}</p>}
+                    {p.url && <a className="proj-url" href={p.url} target="_blank" rel="noreferrer">{p.url}</a>}
+                  </div>
+                </div>
+              ))}
+            </section>
+          )}
+        </div>
+
+        {/* Colonne latérale */}
+        {hasAside && <aside className="rouge-aside">
+          {cv.skills.length > 0 && (
+            <div className="rouge-aside-section">
+              <div className="rouge-aside-title">{t("tplSkills")}</div>
+              {cv.skills.map((s) => (
+                <div key={s.id} className="rouge-skill">
+                  <div className="rouge-skill-name">{s.name}</div>
+                  <div className="rouge-skill-track">
+                    <div className="rouge-skill-fill" style={{ width: `${(s.level/5)*100}%` }} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {cv.languages.length > 0 && (
+            <div className="rouge-aside-section">
+              <div className="rouge-aside-title">{t("tplLangs")}</div>
+              {cv.languages.map((l) => (
+                <div key={l.id} className="rouge-lang">
+                  <span>{l.name}</span>
+                  <span className="rouge-lang-level">{l.level}</span>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {cv.certifications && cv.certifications.length > 0 && (
+            <div className="rouge-aside-section">
+              <div className="rouge-aside-title">{t("tplCerts")}</div>
+              {cv.certifications.map((c) => (
+                <div key={c.id} className="rouge-cert">
+                  <div className="rouge-cert-name">{c.name}</div>
+                  <div className="rouge-cert-meta">{c.issuer}{c.date ? ` · ${c.date}` : ""}</div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {cv.hobbies && cv.hobbies.length > 0 && (
+            <div className="rouge-aside-section">
+              <div className="rouge-aside-title">{t("tplHobbies")}</div>
+              <div className="rouge-hobbies">
+                {cv.hobbies.map((h) => (
+                  <span key={h.id} className="rouge-hobby">{h.name}</span>
+                ))}
+              </div>
+            </div>
+          )}
+        </aside>}
+      </div>
+    </div>
+  )
+}
+
 // ────────────────────────────────────────────────────────────
 // Composant principal
 // ────────────────────────────────────────────────────────────
@@ -761,6 +934,7 @@ export default function CVPreview({ cvData, t: tProp }) {
     executive: <ExecutiveTemplate cv={cvData} t={t} />,
     creative:  <CreativeTemplate  cv={cvData} t={t} />,
     timeline:  <TimelineTemplate  cv={cvData} t={t} />,
+    rouge:     <RougeTemplate     cv={cvData} t={t} />,
   }
   return (
     <div id="cv-preview" className={`cv-paper template-${cvData.template}`}>

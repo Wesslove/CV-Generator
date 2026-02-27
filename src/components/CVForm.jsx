@@ -1,7 +1,7 @@
 // CVForm.jsx
 import React, { useState } from "react"
 
-const TEMPLATES = ["classic", "modern", "minimal", "executive", "creative", "timeline"]
+const TEMPLATES = ["classic", "modern", "minimal", "executive", "creative", "timeline", "rouge"]
 
 function SectionHeader({ onAdd, addLabel }) {
   return (
