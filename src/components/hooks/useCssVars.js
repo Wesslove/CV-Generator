@@ -54,6 +54,17 @@ export function useCssVars(settings) {
     document.documentElement.style.setProperty("--academique-accent", accent)
     document.documentElement.style.setProperty("--startup-accent", accent)
 
+    // compute readable text color for update notice based on accent brightness
+    const hex = accent.replace(/^#/, "")
+    const num = parseInt(hex.length === 3 ? hex.split("").map(h=>h+h).join("") : hex, 16)
+    const r = (num >> 16) & 0xff
+    const g = (num >> 8) & 0xff
+    const b = num & 0xff
+    // relative luminance formula approximate
+    const lum = 0.2126*r + 0.7152*g + 0.0722*b
+    const textColor = lum > 128 ? "#000" : "#fff"
+    document.documentElement.style.setProperty("--notice-text", textColor)
+
     // ── Police ────────────────────────────────────────────────
     const fontOption = FONT_OPTIONS.find((f) => f.value === font) ?? FONT_OPTIONS[0]
     document.documentElement.style.setProperty("--font-heading", fontOption.heading)

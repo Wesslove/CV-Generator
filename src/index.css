@@ -899,7 +899,7 @@ body.dark .tpl-executive .exec-no-photo { background: #444; color: #cdd6f4; }
     right: 10px;
     top: 50px;
     background: var(--accent);
-    color: white;
+    color: var(--notice-text, white);
     padding: 6px 10px;
     border-radius: 4px;
     font-size: 12px;
