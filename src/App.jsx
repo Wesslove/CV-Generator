@@ -5,7 +5,7 @@
 // Il ne contient PAS de logique métier (voir hooks/ et reducer.js)
 // ─────────────────────────────────────────────────────────────
 
-import React, { useEffect, useState, useRef } from "react"
+import React, { useEffect, useState, useRef, useMemo } from "react"
 import CVForm         from "./components/CVForm"
 import CVPreview      from "./components/CVPreview"
 import PhotoCropModal from "./components/PhotoCropModal"
@@ -15,7 +15,7 @@ import { useUndoReducer }  from "./components/hooks/useUndoReducer"
 import { useCvValidation } from "./components/hooks/useCvValidation"
 import { useCssVars }      from "./components/hooks/useCssVars"
 import { useCompletion }   from "./components/hooks/useCompletion"
-import { INITIAL_CV, TEMPLATES, I18N } from "./constants"
+import { INITIAL_CV, TEMPLATES, I18N, APP_VERSION } from "./constants"
 
 import "./index.css"
 
@@ -45,7 +45,9 @@ export default function App() {
 
   // ── Traduction ────────────────────────────────────────────
   const lang = cvData.settings.language || "fr"
-  const t    = makeTranslator(lang)
+  // makeTranslator returns a new function each call; memoize so that
+  // hooks depending on `t` (e.g. useCvValidation) don't rerun continuously.
+  const t = React.useMemo(() => makeTranslator(lang), [lang])
 
   // ── Hooks dérivés ─────────────────────────────────────────
   const { errors, handleBlur, hasErrors } = useCvValidation(cvData, t)
@@ -56,12 +58,14 @@ export default function App() {
   useEffect(() => {
     try {
       const prev = localStorage.getItem("appVersion")
+      console.log("appVersion prev", prev, "current", APP_VERSION)
       if (prev !== APP_VERSION) {
+        console.log("showing update notice")
         setShowUpdateNotice(true)
         localStorage.setItem("appVersion", APP_VERSION)
       }
-    } catch {
-      /* ignore */
+    } catch (err) {
+      console.error("update check error", err)
     }
   }, [])
 

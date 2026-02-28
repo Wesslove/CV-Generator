@@ -37,6 +37,22 @@ export function useCssVars(settings) {
     document.documentElement.style.setProperty("--accent-hover", adjustHexColor(accent, -20))
     document.documentElement.style.setProperty("--classic-border", accent)
     document.documentElement.style.setProperty("--sidebar-accent", accent)
+    // Ensure template-specific accent vars follow the chosen color (some templates
+    // originally defined their own fixed palette, which prevented the color picker
+    // from applying to them).  We overwrite those variables so that the accent
+    // always propagates everywhere.
+    document.documentElement.style.setProperty("--classic-accent", accent)
+    document.documentElement.style.setProperty("--modern-accent", accent)
+    document.documentElement.style.setProperty("--min-accent", accent)
+    document.documentElement.style.setProperty("--exec-gold", accent)
+    document.documentElement.style.setProperty("--impact", accent)
+    // derive a few darker/lighter shades used by impact template
+    document.documentElement.style.setProperty("--impact-dark", adjustHexColor(accent, -40))
+    document.documentElement.style.setProperty("--impact-light", adjustHexColor(accent, 40))
+    document.documentElement.style.setProperty("--impact-mid", adjustHexColor(accent, -20))
+    // academique, startup rely on --accent or custom vars; ensure any still use accent
+    document.documentElement.style.setProperty("--academique-accent", accent)
+    document.documentElement.style.setProperty("--startup-accent", accent)
 
     // ── Police ────────────────────────────────────────────────
     const fontOption = FONT_OPTIONS.find((f) => f.value === font) ?? FONT_OPTIONS[0]

@@ -104,7 +104,7 @@ export const INITIAL_CV = {
 }
 
 // ── Version de l'application (pour notification de mise à jour)
-export const APP_VERSION = "1.0.0"
+export const APP_VERSION = "1.1.1"
 
 // ── Traductions (i18n) ────────────────────────────────────────
 // Pour ajouter une langue : copie le bloc "fr", change la clé,
