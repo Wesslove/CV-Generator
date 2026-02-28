@@ -97,15 +97,6 @@ body {
 .tpl-btn:hover { border-color: var(--sidebar-accent); color: var(--sidebar-accent); }
 .tpl-btn.active { background: var(--sidebar-accent); color: var(--sidebar-bg); border-color: var(--sidebar-accent); font-weight: 600; }
 
-.save-indicator {
-  color: var(--success);
-  font-size: 13px;
-  opacity: 0;
-  transition: opacity .3s;
-  white-space: nowrap;
-}
-.save-indicator.visible { opacity: 1; }
-
 /* ── Contenu principal ─────────────────────────────────────── */
 .main-content {
   display: flex;
@@ -857,7 +848,30 @@ body.dark .tpl-executive .exec-no-photo { background: #444; color: #cdd6f4; }
   }
 
   .switcher-label { display: none; }
-  .tpl-btn { padding: 4px 10px; font-size: 12px; }
+  .tpl-btn { display: inline-flex; align-items: center; padding: 4px 10px; font-size: 12px; }
+
+  /* small preview thumbnail shown inside template buttons */
+  .tpl-thumb {
+    display: inline-block;
+    position: relative;
+    width: 50px;
+    height: 32px;
+    margin-right: 6px;
+    vertical-align: middle;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  /* simple background colors as placeholders; replace with real images later */
+  .tpl-thumb-classic   { background: #fafafa; }
+  .tpl-thumb-modern    { background: #f3f4f6; }
+  .tpl-thumb-minimal   { background: #ffffff; }
+  .tpl-thumb-executive { background: #f0f0f0; }
+  .tpl-thumb-creative  { background: #fff7ed; }
+  .tpl-thumb-timeline  { background: #e5e7eb; }
+  .tpl-thumb-impact    { background: #fef3c7; }
+  .tpl-thumb-academique{ background: #e0f2fe; }
+  .tpl-thumb-startup   { background: #ecfccb; }
 }
 
 /* ── MOBILE (< 768px) ───────────────────────────────────────── */
@@ -880,6 +894,28 @@ body.dark .tpl-executive .exec-no-photo { background: #444; color: #cdd6f4; }
   .template-switcher { display: none; }
 
   .save-indicator { font-size: 11px; }
+  .update-notice {
+    position: absolute;
+    right: 10px;
+    top: 50px;
+    background: var(--accent);
+    color: white;
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 1000;
+  }
+  .update-notice .update-dismiss {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+    line-height: 1;
+  }
 
   .main-content { height: 100%; position: relative; }
 

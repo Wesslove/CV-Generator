@@ -239,6 +239,7 @@ export default function CVForm({
             <button key={tpl}
               className={`tpl-btn-light ${cvData.template === tpl ? "active" : ""}`}
               onClick={() => onTemplateChange && onTemplateChange(tpl)}>
+              <span className={`tpl-thumb tpl-thumb-${tpl}`} />
               {{"academique": "Académique", "startup": "Startup"}[tpl] || tpl.charAt(0).toUpperCase() + tpl.slice(1)}
             </button>
           ))}

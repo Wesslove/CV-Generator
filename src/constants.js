@@ -103,6 +103,9 @@ export const INITIAL_CV = {
   },
 }
 
+// ── Version de l'application (pour notification de mise à jour)
+export const APP_VERSION = "1.0.0"
+
 // ── Traductions (i18n) ────────────────────────────────────────
 // Pour ajouter une langue : copie le bloc "fr", change la clé,
 // et traduis les valeurs. Tous les composants utilisent t(clé).
@@ -118,6 +121,8 @@ export const I18N = {
     livePreview:  "Aperçu en direct",
     undo:         "Annuler",
     edit:         "Éditer",
+    updateDone:   "Mise à jour effectuée",
+    newFeature:   "Nouvelle fonctionnalité disponible",
     preview:      "Aperçu",
     // Formulaire - titres de section
     formTitle:    "Informations du CV",
@@ -234,6 +239,8 @@ export const I18N = {
     livePreview: "Live preview",
     undo:        "Undo",
     edit:        "Edit",
+    updateDone:  "Update complete",
+    newFeature:  "New feature available",
     preview:     "Preview",
     formTitle:   "CV Information",
     appearance:  "🎨 Appearance",

@@ -36,7 +36,7 @@ export default function App() {
     useUndoReducer(cvReducer, INITIAL_CV)
 
   // ── États UI (n'affectent pas le contenu du CV) ───────────
-  const [saved,     setSaved]     = useState(false)
+  const [showUpdateNotice, setShowUpdateNotice] = useState(false)
   const [mobileTab, setMobileTab] = useState("edit") // "edit" | "preview"
   const [importMsg, setImportMsg] = useState("")
   const [cropSrc,   setCropSrc]   = useState(null)   // src brute avant recadrage
@@ -51,6 +51,19 @@ export default function App() {
   const { errors, handleBlur, hasErrors } = useCvValidation(cvData, t)
   const { score, checks }                 = useCompletion(cvData, t)
   useCssVars(cvData.settings)
+
+  // ── Notification de mise à jour de l'application ─────────
+  useEffect(() => {
+    try {
+      const prev = localStorage.getItem("appVersion")
+      if (prev !== APP_VERSION) {
+        setShowUpdateNotice(true)
+        localStorage.setItem("appVersion", APP_VERSION)
+      }
+    } catch {
+      /* ignore */
+    }
+  }, [])
 
   // ── Chargement depuis localStorage au démarrage ───────────
   useEffect(() => {
@@ -71,9 +84,6 @@ export default function App() {
     const { photo, ...toSave } = cvData
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave))
-      setSaved(true)
-      const timer = setTimeout(() => setSaved(false), 1500)
-      return () => clearTimeout(timer)
     } catch {
       console.warn("localStorage: impossible de sauvegarder.")
     }
@@ -200,12 +210,19 @@ export default function App() {
               className={`tpl-btn ${cvData.template === tpl.id ? "active" : ""}`}
               onClick={() => setTemplate(tpl.id)}
             >
+              <span className={`tpl-thumb tpl-thumb-${tpl.id}`} />
               {tpl.label}
             </button>
           ))}
         </div>
 
-        <div className={`save-indicator ${saved ? "visible" : ""}`}>{t("saved")}</div>
+        {/* save indicator removed, updates are silent */}
+        {showUpdateNotice && (
+          <div className="update-notice">
+            {t("updateDone")} – {t("newFeature")}
+            <button className="update-dismiss" onClick={() => setShowUpdateNotice(false)}>×</button>
+          </div>
+        )}
       </header>
 
       {/* ── Contenu principal ── */}

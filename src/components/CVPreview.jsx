@@ -1277,7 +1277,7 @@ function StartupTemplate({ cv, t }) {
 // ────────────────────────────────────────────────────────────
 // Composant principal
 // ────────────────────────────────────────────────────────────
-export default function CVPreview({ cvData, t: tProp }) {
+export default function CVPreview({ cvData, t: tProp, className = "" }) {
   const t = tProp || ((k) => k)
   const templates = {
     classic:   <ClassicTemplate   cv={cvData} t={t} />,
@@ -1291,7 +1291,7 @@ export default function CVPreview({ cvData, t: tProp }) {
     startup:    <StartupTemplate    cv={cvData} t={t} />,
   }
   return (
-    <div id="cv-preview" className={`cv-paper template-${cvData.template}`}>
+    <div id="cv-preview" className={`cv-paper template-${cvData.template} ${className}`.trim()}>
       {templates[cvData.template] || templates.classic}
     </div>
   )
