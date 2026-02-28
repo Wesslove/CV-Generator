@@ -193,7 +193,7 @@ export default function CVForm({
   onChange, onBlur, onPhoto, onAdd, onUpdate, onRemove, onReorder,
   onTemplateChange, onAddCustomSection, onUpdateCustomSection,
   onRemoveCustomSection, onAddCustomItem, onRemoveCustomItem,
-  onUpdateCustomItem, commitToHistory, t
+  onUpdateCustomItem, commitToHistory, t, lang = "fr"
 }) {
   const [openSection, setOpenSection] = useState("personal")
   const toggle = (s) => setOpenSection(openSection === s ? null : s)
@@ -297,7 +297,19 @@ export default function CVForm({
           {cvData.photo ? (
             <div className="photo-preview-wrap">
               <img src={cvData.photo} alt="Photo" className="photo-thumb" />
-              <button className="photo-remove" onClick={() => onChange({ target: { name: "photo", value: null } })}>×</button>
+              <div className="photo-actions">
+                <label className="photo-action-btn" title={lang === "en" ? "Crop" : "Recadrer"}>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M6 2v14a2 2 0 002 2h14M18 22V8a2 2 0 00-2-2H2"/>
+                  </svg>
+                  <input type="file" accept="image/*" onChange={onPhoto} hidden />
+                </label>
+                <button className="photo-action-btn photo-remove" onClick={() => onChange({ target: { name: "photo", value: null } })} title={lang === "en" ? "Remove" : "Supprimer"}>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                  </svg>
+                </button>
+              </div>
             </div>
           ) : (
             <label className="photo-upload-label">

@@ -313,6 +313,23 @@ body {
   flex-shrink: 0;
   font-family: var(--font-body);
   font-size: var(--cv-base-size);
+  box-sizing: border-box;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+  /* Transition fluide lors du changement de template */
+  animation: templateFadeIn 0.25s ease;
+}
+
+@keyframes templateFadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Pendant la génération PDF : on laisse le contenu dicter la hauteur */
+.cv-paper.pdf-export {
+  min-height: unset !important;
+  height: auto !important;
+  box-shadow: none !important;
 }
 
 /* Apply heading font to all template h1/h2 inside paper */
@@ -2283,4 +2300,279 @@ body.dark .tpl-executive .exec-no-photo { background: #444; color: #cdd6f4; }
   color: #475569;
   padding: 3px 8px;
   border-radius: 10px;
+}
+/* ══════════════════════════════════════════════════════════════
+   PHOTO CROP MODAL
+══════════════════════════════════════════════════════════════ */
+
+.crop-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.72);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  backdrop-filter: blur(4px);
+  animation: fadeIn .15s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.crop-modal {
+  background: #fff;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 480px;
+  box-shadow: 0 24px 80px rgba(0,0,0,.35);
+  overflow: hidden;
+  animation: slideUp .2s ease;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(24px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+.crop-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid #e4e4e7;
+}
+
+.crop-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #18181b;
+}
+
+.crop-close {
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: #71717a;
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background .15s;
+}
+.crop-close:hover { background: #f4f4f5; color: #18181b; }
+
+.crop-canvas-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 20px 8px;
+  background: #0f172a;
+}
+
+.crop-canvas {
+  border-radius: 12px;
+  max-width: 100%;
+  height: auto;
+  display: block;
+  touch-action: none;
+  user-select: none;
+}
+
+.crop-hint {
+  font-size: 12px;
+  color: rgba(255,255,255,.45);
+  margin-top: 8px;
+  text-align: center;
+}
+
+.crop-controls {
+  padding: 16px 20px;
+  border-bottom: 1px solid #e4e4e7;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.crop-shape-btns {
+  display: flex;
+  gap: 8px;
+}
+
+.crop-shape-btn {
+  flex: 1;
+  padding: 8px 0;
+  border: 2px solid #e4e4e7;
+  background: #fafafa;
+  color: #52525b;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all .15s;
+  font-family: inherit;
+}
+.crop-shape-btn:hover { border-color: var(--accent); color: var(--accent); }
+.crop-shape-btn.active {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #fff;
+  font-weight: 600;
+}
+
+.crop-zoom-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.crop-zoom-label {
+  font-size: 13px;
+  color: #52525b;
+  font-weight: 500;
+  width: 38px;
+  flex-shrink: 0;
+}
+
+.crop-zoom-slider {
+  flex: 1;
+  height: 4px;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.crop-zoom-pct {
+  font-size: 13px;
+  color: #52525b;
+  font-weight: 600;
+  width: 42px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.crop-actions {
+  display: flex;
+  gap: 10px;
+  padding: 16px 20px;
+}
+
+.crop-btn-cancel {
+  flex: 1;
+  padding: 10px 0;
+  border: 1px solid #e4e4e7;
+  background: #fff;
+  color: #52525b;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background .15s;
+}
+.crop-btn-cancel:hover { background: #f4f4f5; }
+
+.crop-btn-confirm {
+  flex: 2;
+  padding: 10px 0;
+  border: none;
+  background: var(--accent);
+  color: #fff;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background .15s, transform .1s;
+}
+.crop-btn-confirm:hover { background: var(--accent-hover); }
+.crop-btn-confirm:active { transform: scale(.97); }
+
+/* ── Photo actions (recadrer / supprimer) ── */
+.photo-preview-wrap {
+  position: relative;
+  width: 80px;
+}
+
+.photo-actions {
+  position: absolute;
+  bottom: -8px;
+  right: -8px;
+  display: flex;
+  gap: 4px;
+}
+
+.photo-action-btn {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: white;
+  border: 2px solid white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform .15s, background .15s;
+  box-shadow: 0 2px 6px rgba(0,0,0,.2);
+}
+.photo-action-btn:hover { transform: scale(1.1); }
+.photo-action-btn.photo-remove { background: var(--danger); }
+
+/* ── Spinner animation pour le bouton PDF ── */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+.spin-icon {
+  animation: spin 0.9s linear infinite;
+}
+/* ══════════════════════════════════════════════════════════════
+   ZOOM CONTROLS
+══════════════════════════════════════════════════════════════ */
+.zoom-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: #f4f4f5;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 3px 6px;
+}
+
+.zoom-btn {
+  width: 26px;
+  height: 26px;
+  border: none;
+  background: none;
+  color: var(--text);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background .15s;
+  line-height: 1;
+}
+.zoom-btn:hover { background: var(--border); }
+.zoom-reset { font-size: 14px; }
+
+.zoom-pct {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  min-width: 38px;
+  text-align: center;
+  user-select: none;
+}
+
+/* Ajuste la hauteur du scroll quand on zoome (évite le blanc en bas) */
+.preview-scroll {
+  align-items: flex-start;
 }

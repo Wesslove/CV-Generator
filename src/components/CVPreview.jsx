@@ -81,7 +81,7 @@ function ProjectsList({ projects, titleClass, t }) {
             <strong>{p.name}</strong>
             {p.stack && <span className="proj-stack">{p.stack}</span>}
           </div>
-          {p.description && <p className="proj-desc">{p.description}</p>}
+          <BulletsList item={p} className="proj-desc" />
           {p.url && <a className="proj-url" href={p.url} target="_blank" rel="noreferrer">{p.url}</a>}
         </div>
       ))}
@@ -233,7 +233,7 @@ function ModernTemplate({ cv, t }) {
           <div className="modern-left">
             {cv.skills.length > 0 && (
               <section className="modern-section">
-                <h3 className="modern-section-title"><span className="msec-icon">⚡</span> Compétences</h3>
+                <h3 className="modern-section-title"><span className="msec-icon">⚡</span> {t("tplSkills")}</h3>
                 {cv.skills.map((s) => (
                   <div key={s.id} className="modern-skill">
                     <div className="modern-skill-label">
@@ -249,7 +249,7 @@ function ModernTemplate({ cv, t }) {
             )}
             {cv.languages.length > 0 && (
               <section className="modern-section">
-                <h3 className="modern-section-title"><span className="msec-icon">🌍</span> Langues</h3>
+                <h3 className="modern-section-title"><span className="msec-icon">🌍</span> {t("tplLangs")}</h3>
                 {cv.languages.map((l) => (
                   <div key={l.id} className="modern-lang">
                     <span>{l.name}</span>
@@ -260,7 +260,7 @@ function ModernTemplate({ cv, t }) {
             )}
             {cv.certifications && cv.certifications.length > 0 && (
               <section className="modern-section">
-                <h3 className="modern-section-title"><span className="msec-icon">🏆</span> Certifications</h3>
+                <h3 className="modern-section-title"><span className="msec-icon">🏆</span> {t("tplCerts")}</h3>
                 {cv.certifications.map((c) => (
                   <div key={c.id} className="cert-item">
                     <div className="cert-top"><strong>{c.name}</strong>{c.date && <span className="cert-date">{c.date}</span>}</div>
@@ -271,7 +271,7 @@ function ModernTemplate({ cv, t }) {
             )}
             {cv.hobbies && cv.hobbies.length > 0 && (
               <section className="modern-section">
-                <h3 className="modern-section-title"><span className="msec-icon">🎯</span> Loisirs</h3>
+                <h3 className="modern-section-title"><span className="msec-icon">🎯</span> {t("tplHobbies")}</h3>
                 <ul className="hobbies-list">{cv.hobbies.map((h) => <li key={h.id}>{h.name}</li>)}</ul>
               </section>
             )}
@@ -280,7 +280,7 @@ function ModernTemplate({ cv, t }) {
           <div className="modern-right">
             {cv.experiences.length > 0 && (
               <section className="modern-section">
-                <h3 className="modern-section-title"><span className="msec-icon">💼</span> Expériences</h3>
+                <h3 className="modern-section-title"><span className="msec-icon">💼</span> {t("tplExp")}</h3>
                 {cv.experiences.map((exp) => (
                   <div key={exp.id} className="modern-entry">
                     <div className="modern-entry-header">
@@ -295,7 +295,7 @@ function ModernTemplate({ cv, t }) {
             )}
             {cv.educations.length > 0 && (
               <section className="modern-section">
-                <h3 className="modern-section-title"><span className="msec-icon">🎓</span> Formation</h3>
+                <h3 className="modern-section-title"><span className="msec-icon">🎓</span> {t("tplEdu")}</h3>
                 {cv.educations.map((edu) => (
                   <div key={edu.id} className="modern-entry">
                     <div className="modern-entry-header">
@@ -310,11 +310,11 @@ function ModernTemplate({ cv, t }) {
             )}
             {cv.projects && cv.projects.length > 0 && (
               <section className="modern-section">
-                <h3 className="modern-section-title"><span className="msec-icon">🚀</span> Projets</h3>
+                <h3 className="modern-section-title"><span className="msec-icon">🚀</span> {t("tplProjects")}</h3>
                 {cv.projects.map((p) => (
                   <div key={p.id} className="proj-item">
                     <div className="proj-top"><strong>{p.name}</strong>{p.stack && <span className="proj-stack">{p.stack}</span>}</div>
-                    {p.description && <p className="proj-desc">{p.description}</p>}
+                    <BulletsList item={p} className="proj-desc" />
                     {p.url && <a className="proj-url" href={p.url} target="_blank" rel="noreferrer">{p.url}</a>}
                   </div>
                 ))}
@@ -539,7 +539,7 @@ function ExecutiveTemplate({ cv, t }) {
                     <span className="exec-entry-role">{p.name}</span>
                     {p.stack && <span className="exec-entry-period">{p.stack}</span>}
                   </div>
-                  {p.description && <p className="exec-entry-desc">{p.description}</p>}
+                  <BulletsList item={p} className="exec-entry-desc" />
                 </div>
               ))}
             </section>
@@ -725,7 +725,7 @@ function TimelineTemplate({ cv, t }) {
       <div className="tl2-body">
         {cv.experiences.length > 0 && (
           <div className="tl2-column">
-            <div className="tl2-col-header"><span className="tl2-col-icon">💼</span> Expériences</div>
+            <div className="tl2-col-header"><span className="tl2-col-icon">💼</span> {t("tplExp")}</div>
             <div className="tl2-track">
               {cv.experiences.map((exp) => (
                 <div key={exp.id} className="tl2-node">
@@ -744,7 +744,7 @@ function TimelineTemplate({ cv, t }) {
         <div className="tl2-column">
           {cv.educations.length > 0 && (
             <>
-              <div className="tl2-col-header"><span className="tl2-col-icon">🎓</span> Formation</div>
+              <div className="tl2-col-header"><span className="tl2-col-icon">🎓</span> {t("tplEdu")}</div>
               <div className="tl2-track">
                 {cv.educations.map((edu) => (
                   <div key={edu.id} className="tl2-node">
@@ -762,7 +762,7 @@ function TimelineTemplate({ cv, t }) {
           )}
           {cv.projects && cv.projects.length > 0 && (
             <>
-              <div className="tl2-col-header" style={{marginTop:'16px'}}><span className="tl2-col-icon">🚀</span> Projets</div>
+              <div className="tl2-col-header" style={{marginTop:'16px'}}><span className="tl2-col-icon">🚀</span> {t("tplProjects")}</div>
               <div className="tl2-track">
                 {cv.projects.map((p) => (
                   <div key={p.id} className="tl2-node">
@@ -897,7 +897,7 @@ function ImpactTemplate({ cv, t }) {
                   </div>
                   <div className="impact-entry-right">
                     <div className="impact-entry-role">{p.name}</div>
-                    {p.description && <p className="impact-entry-desc">{p.description}</p>}
+                    <BulletsList item={p} className="impact-entry-desc" />
                     {p.url && <a className="proj-url" href={p.url} target="_blank" rel="noreferrer">{p.url}</a>}
                   </div>
                 </div>
@@ -1072,7 +1072,7 @@ function AcademiqueTemplate({ cv, t }) {
               {cv.skills.map((s) => (
                 <div key={s.id} className="acad-skill">
                   <span className="acad-skill-name">{s.name}</span>
-                  <span className="acad-skill-level">{["","Notions","Débutant","Intermédiaire","Avancé","Expert"][s.level]}</span>
+                  <span className="acad-skill-level">{["",(t("notions")||"Notions"),(t("beginner")||"Débutant"),(t("intermediate")||"Intermédiaire"),(t("advanced")||"Avancé"),(t("expert")||"Expert")][s.level]}</span>
                 </div>
               ))}
             </section>
