@@ -4,7 +4,7 @@
 // Séparé de App.jsx pour être facile à modifier ou étendre.
 // ─────────────────────────────────────────────────────────────
 
-import { useState, useEffect } from "react"
+import { useMemo, useState } from "react"
 
 // Regex basique de validation d'email
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -19,10 +19,9 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 export function useCvValidation(cvData, t) {
   // touched : quels champs ont déjà été touchés par l'utilisateur
   const [touched, setTouched] = useState({})
-  const [errors, setErrors]   = useState({})
 
-  // Revalide à chaque changement de cvData ou de champ touché
-  useEffect(() => {
+  // Erreurs dérivées (pas de setState dans un effect)
+  const errors = useMemo(() => {
     const errs = {}
 
     // Nom obligatoire
@@ -35,17 +34,12 @@ export function useCvValidation(cvData, t) {
       errs.title = t("errTitle")
     }
 
-    // Email : validé seulement si l'utilisateur l'a touché
-    // et qu'il n'est pas vide
-    if (
-      touched.email &&
-      cvData.email.trim() &&
-      !EMAIL_REGEX.test(cvData.email)
-    ) {
+    // Email : validé seulement si l'utilisateur l'a touché et qu'il n'est pas vide
+    if (touched.email && cvData.email.trim() && !EMAIL_REGEX.test(cvData.email)) {
       errs.email = t("errEmail")
     }
 
-    setErrors(errs)
+    return errs
   }, [cvData, touched, t])
 
   // Marque un champ comme "touché" quand l'utilisateur le quitte

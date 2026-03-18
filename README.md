@@ -15,6 +15,46 @@ The React Compiler is not enabled on this template because of its impact on dev 
 
 Ce repo est devenu un petit générateur de CV en React. L'interface se compose de deux parties : un formulaire de saisie à gauche et un aperçu imprimable du CV à droite.
 
+## Documentation globale (développeur)
+
+### Architecture (où regarder)
+
+- `src/components/CVForm.jsx`
+  - Formulaire principal (édition des données)
+  - Utilise des briques dans `src/components/cvForm/`
+- `src/components/cvForm/`
+  - UI réutilisable + drag & drop + éditeur de puces + constantes
+  - Doc détaillée: `src/components/cvForm/README.md`
+- `src/components/CVDocument.jsx`
+  - (Aperçu / rendu du CV) — c’est l’endroit à compléter si tu veux un composant séparé pour l’aperçu
+
+### Flux de données (le “contrat” à comprendre)
+
+Le formulaire est **contrôlé**: il reçoit `cvData` depuis le parent et n’a pas la “source of truth”.
+Quand l’utilisateur modifie une valeur, `CVForm` appelle des callbacks fournis par le parent.
+
+Callbacks principaux (utilisés dans `CVForm.jsx`) :
+
+- `onChange({ target: { name, value } })`
+  - Pour les champs simples directement sur `cvData` (ex: `name`, `email`, `settings`…)
+- `onAdd(sectionKey, initialItem)`
+  - Ajoute un item à une liste (ex: `experiences`, `skills`…)
+- `onUpdate(sectionKey, itemId, field, value)`
+  - Met à jour un champ d’un item (ex: rôle d’une expérience)
+- `onRemove(sectionKey, itemId)`
+  - Supprime un item d’une liste
+- `onReorder(sectionKey, fromIndex, toIndex)`
+  - Réordonne une liste après drag & drop
+- `commitToHistory()`
+  - Valide une modification (utile pour undo/redo), en général appelé sur `onBlur`
+
+### Par où commencer pour modifier quelque chose ?
+
+- Modifier un **champ simple** (ex: téléphone) → `CVForm.jsx` + composant `Field` (`src/components/cvForm/ui/Field.jsx`)
+- Modifier une **liste** (expériences, compétences...) → `CVForm.jsx` + DnD (`src/components/cvForm/dnd/*`)
+- Modifier les **descriptions en puces** → `src/components/cvForm/BulletsEditor.jsx`
+- Ajouter un **template** / options → `src/components/cvForm/constants.js`
+
 ### Utilisation
 1. Remplissez les champs du formulaire. Les champs **Nom**, **Titre professionnel** et **Email** sont requis.
 1.5 Ajoutez une ou plusieurs photos (portrait, logo, etc.) via le champ "Photos".

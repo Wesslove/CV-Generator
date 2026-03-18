@@ -14,7 +14,7 @@
 //   update-notice           → petit composant isolé, gardé tel quel
 // ─────────────────────────────────────────────────────────────
 
-import React, { useEffect, useState, useRef, useMemo } from "react"
+import React, { useEffect, useState, useRef } from "react"
 import CVForm         from "./components/CVForm"
 import CVPreview      from "./components/CVPreview"
 import PhotoCropModal from "./components/PhotoCropModal"
@@ -78,7 +78,7 @@ export default function App() {
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    const { photo, ...toSave } = cvData
+    const { photo: _photo, ...toSave } = cvData
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave))
     } catch {
@@ -129,7 +129,7 @@ export default function App() {
   const removeCustomItem    = (sectionId, itemId)   => dispatch({ type: "REMOVE_CUSTOM_ITEM", sectionId, itemId })
 
   const downloadJSON = () => {
-    const { photo, ...toSave } = cvData
+    const { photo: _photo, ...toSave } = cvData
     const blob = new Blob([JSON.stringify(toSave, null, 2)], { type: "application/json" })
     const url  = URL.createObjectURL(blob)
     const a    = document.createElement("a")
@@ -158,7 +158,17 @@ export default function App() {
     e.target.value = ""
   }
 
-  const printPDF  = () => window.print()
+  const printPDF = () => {
+    // Sauvegarder le zoom actuel, forcer 100% pour l'impression,
+    // puis restaurer après — évite la 2e page vide causée par scale()
+    const savedZoom = zoom
+    setZoom(100)
+    // Laisser React re-render avant d'ouvrir la boîte impression
+    setTimeout(() => {
+      window.print()
+      setZoom(savedZoom)
+    }, 80)
+  }
   const zoomIn    = () => setZoom((z) => Math.min(150, z + 10))
   const zoomOut   = () => setZoom((z) => Math.max(50,  z - 10))
   const zoomReset = () => setZoom(100)
@@ -168,8 +178,8 @@ export default function App() {
   // ─────────────────────────────────────────────────────────
   return (
     // ── Conteneur racine ──────────────────────────────────
-    // app-layout → flex flex-col h-screen overflow-hidden pb-16 md:pb-0
-    <div className="flex flex-col h-screen overflow-hidden pb-16 md:pb-0">
+    // id="app-root" → ciblé par @media print dans index.css
+    <div id="app-root" className="app-root">
 
       {/* Modal recadrage photo */}
       {cropSrc && (
@@ -182,8 +192,8 @@ export default function App() {
       )}
 
       {/* ── Barre supérieure ─────────────────────────────── */}
-      {/* top-bar → h-[52px] bg-[#1e1e2e] flex items-center px-5 gap-6 shrink-0 border-b border-white/[0.06] relative */}
-      <header className="h-[52px] bg-[#1e1e2e] flex items-center px-5 gap-6 shrink-0 border-b border-white/[0.06] relative">
+      {/* id="app-topbar" → masqué à l'impression via @media print */}
+      <header id="app-topbar" className="h-[52px] bg-[#1e1e2e] flex items-center px-5 gap-6 shrink-0 border-b border-white/[0.06] relative">
 
         {/* Marque */}
         {/* top-bar-brand + brand-name */}
@@ -229,20 +239,17 @@ export default function App() {
       </header>
 
       {/* ── Contenu principal ────────────────────────────── */}
-      {/* main-content → flex flex-1 overflow-hidden */}
-      <div className="flex flex-1 overflow-hidden">
+      {/* id="app-content" → ciblé par @media print */}
+      <div id="app-content" className="app-content">
 
-        {/* Formulaire — sidebar gauche */}
-        {/*
-          form-sidebar     → w-[360px] shrink-0 bg-white border-r border-zinc-200 overflow-y-auto px-4 pt-5 pb-10
-          mobile-hidden    → hidden (sur mobile quand onglet "preview")
-          tablette         → w-[280px]
-        */}
-        <aside className={[
-          "shrink-0 bg-white border-r border-zinc-200 overflow-y-auto px-4 pt-5 pb-10",
-          "w-full md:w-[280px] lg:w-[360px]",
-          mobileTab !== "edit" ? "hidden md:block" : "block",
-        ].join(" ")}>
+        {/* Sidebar — classe CSS statique .app-sidebar dans index.css
+            Tailwind CDN ne détecte pas les classes construites dynamiquement au runtime.
+            La visibilité + largeur responsive sont gérées en CSS pur via data-hidden */}
+        <aside
+          id="app-sidebar"
+          className="app-sidebar"
+          data-hidden={mobileTab !== "edit" ? "true" : "false"}
+        >
           <CVForm
             cvData={cvData}             errors={errors}
             completionScore={score}     completionChecks={checks}
@@ -267,14 +274,15 @@ export default function App() {
           preview-area → flex flex-1 flex-col overflow-hidden bg-[#f4f3f0]
           mobile-hidden → hidden quand onglet "edit"
         */}
-        <main className={[
-          "flex flex-1 flex-col overflow-hidden bg-[#f4f3f0]",
-          mobileTab !== "preview" ? "hidden md:flex" : "flex",
-        ].join(" ")}>
+        {/* Preview — même raison : classe CSS statique .app-preview */}
+        <main
+          id="app-preview"
+          className="app-preview"
+          data-hidden={mobileTab !== "preview" ? "true" : "false"}
+        >
 
           {/* Barre de contrôles aperçu */}
-          {/* preview-controls → flex items-center justify-between px-6 py-3 border-b border-zinc-200 bg-white */}
-          <div className="flex items-center justify-between px-6 py-3 border-b border-zinc-200 bg-white">
+          <div id="app-preview-controls" className="flex items-center justify-between px-6 py-3 border-b border-zinc-200 bg-white">
 
             {/* preview-label → text-[13px] text-zinc-400 font-medium */}
             <span className="text-[13px] text-zinc-400 font-medium">
@@ -379,9 +387,9 @@ export default function App() {
           )}
 
           {/* Zone de défilement du CV avec zoom */}
-          {/* preview-scroll → flex-1 overflow-y-auto flex justify-center pt-8 px-6 pb-[60px] items-start */}
-          <div className="flex-1 overflow-y-auto flex justify-center pt-8 px-6 pb-[60px] items-start">
-            <div style={{ transform: `scale(${zoom / 100})`, transformOrigin: "top center", transition: "transform 0.2s ease" }}>
+          {/* id="app-preview-scroll" → ciblé par @media print pour annuler le zoom */}
+          <div id="app-preview-scroll" className="flex-1 overflow-y-auto flex justify-center pt-8 px-6 pb-[60px] items-start">
+            <div id="zoom-wrapper" style={{ transform: `scale(${zoom / 100})`, transformOrigin: "top center", transition: "transform 0.2s ease" }}>
               <CVPreview cvData={cvData} t={t} />
             </div>
           </div>
@@ -389,12 +397,8 @@ export default function App() {
       </div>
 
       {/* ── Navigation mobile (barre en bas) ────────────── */}
-      {/*
-        mobile-bottom-nav → fixed bottom-0 left-0 right-0 h-16
-                            bg-[#1e1e2e] border-t border-white/[0.08]
-                            z-[1000] flex md:hidden
-      */}
-      <nav className="fixed bottom-0 left-0 right-0 h-16 bg-[#1e1e2e] border-t border-white/[0.08] z-[1000] flex md:hidden">
+      {/* id="app-mobile-nav" → masqué à l'impression */}
+      <nav id="app-mobile-nav" className="fixed bottom-0 left-0 right-0 h-16 bg-[#1e1e2e] border-t border-white/[0.08] z-[1000] flex md:hidden">
 
         {/* Onglet Édition */}
         {/*

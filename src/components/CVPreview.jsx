@@ -1,4 +1,4 @@
-// CVPreview.jsx – 6 templates : classic, modern, minimal, executive, creative, timeline
+// CVPreview.jsx – 9 templates : classic, modern, minimal, executive, creative, timeline, impact, academique, startup
 import React from "react"
 
 const SKILL_LABELS = ["", "Notions", "Débutant", "Intermédiaire", "Avancé", "Expert"]
@@ -17,7 +17,7 @@ function BulletsList({ item, className }) {
 }
 
 // ── Custom sections renderer ─────────────────────────────────
-function CustomSectionsList({ sections, titleClass, t }) {
+function CustomSectionsList({ sections, titleClass }) {
   if (!sections || sections.length === 0) return null
   return sections.map(sec => {
     if (!sec.title && (!sec.items || sec.items.length === 0)) return null
@@ -38,7 +38,6 @@ function CustomSectionsList({ sections, titleClass, t }) {
     )
   })
 }
-
 
 function SkillBar({ level }) {
   return (
@@ -101,10 +100,12 @@ function ClassicTemplate({ cv, t }) {
           <h1>{cv.name || "Votre Nom"}</h1>
           <h2>{cv.title || "Titre Professionnel"}</h2>
           <div className="classic-contacts">
-            {cv.phone    && <span>📞 {cv.phone}</span>}
-            {cv.email    && <span>✉ {cv.email}</span>}
-            {cv.location && <span>📍 {cv.location}</span>}
-            {cv.linkedin && <span>🔗 {cv.linkedin}</span>}
+            {cv.phone         && <span>📞 {cv.phone}</span>}
+            {cv.email         && <span>✉ {cv.email}</span>}
+            {cv.location      && <span>📍 {cv.location}</span>}
+            {cv.linkedin      && <span>🔗 {cv.linkedin}</span>}
+            {cv.birthDate     && <span>🎂 {cv.birthDate}{cv.birthPlace ? ` — ${cv.birthPlace}` : ""}</span>}
+            {cv.maritalStatus && <span>💍 {cv.maritalStatus}</span>}
           </div>
         </div>
       </header>
@@ -194,7 +195,7 @@ function ClassicTemplate({ cv, t }) {
           {cv.projects && cv.projects.length > 0 && (
             <ProjectsList projects={cv.projects} titleClass="classic-section-title main-title" t={t} />
           )}
-          <CustomSectionsList sections={cv.customSections} titleClass="classic-section-title main-title" t={t} />
+          <CustomSectionsList sections={cv.customSections} titleClass="classic-section-title main-title" />
         </div>
       </div>
     </div>
@@ -217,10 +218,12 @@ function ModernTemplate({ cv, t }) {
           <h1>{cv.name || "Votre Nom"}</h1>
           <div className="modern-title-badge">{cv.title || "Titre Professionnel"}</div>
           <div className="modern-contacts">
-            {cv.phone    && <span>{cv.phone}</span>}
-            {cv.email    && <span>{cv.email}</span>}
-            {cv.location && <span>{cv.location}</span>}
-            {cv.linkedin && <span>{cv.linkedin}</span>}
+            {cv.phone         && <span>{cv.phone}</span>}
+            {cv.email         && <span>{cv.email}</span>}
+            {cv.location      && <span>{cv.location}</span>}
+            {cv.linkedin      && <span>{cv.linkedin}</span>}
+            {cv.birthDate     && <span>{cv.birthDate}{cv.birthPlace ? ` — ${cv.birthPlace}` : ""}</span>}
+            {cv.maritalStatus && <span>{cv.maritalStatus}</span>}
           </div>
         </div>
       </header>
@@ -320,7 +323,7 @@ function ModernTemplate({ cv, t }) {
                 ))}
               </section>
             )}
-            <CustomSectionsList sections={cv.customSections} titleClass="modern-section-title" t={t} />
+            <CustomSectionsList sections={cv.customSections} titleClass="modern-section-title" />
           </div>
         </div>
       </div>
@@ -340,7 +343,16 @@ function MinimalTemplate({ cv, t }) {
           <h1>{cv.name || "Votre Nom"}</h1>
           <p className="min-title">{cv.title || "Titre Professionnel"}</p>
           <div className="min-contacts">
-            {[cv.phone, cv.email, cv.location, cv.linkedin].filter(Boolean).join(" · ")}
+            {[
+              cv.phone,
+              cv.email,
+              cv.location,
+              cv.linkedin,
+              cv.birthDate
+                ? (cv.birthPlace ? `${cv.birthDate} · ${cv.birthPlace}` : cv.birthDate)
+                : null,
+              cv.maritalStatus,
+            ].filter(Boolean).join(" · ")}
           </div>
         </div>
       </header>
@@ -424,7 +436,7 @@ function MinimalTemplate({ cv, t }) {
               ))}
             </section>
           )}
-          <CustomSectionsList sections={cv.customSections} titleClass="min-section h3" t={t} />
+          <CustomSectionsList sections={cv.customSections} titleClass="min-section h3" />
         </div>
       </div>
     </div>
@@ -445,10 +457,12 @@ function ExecutiveTemplate({ cv, t }) {
         </div>
         <div className="exec-sidebar-section">
           <div className="exec-sidebar-title">{t("tplContact")}</div>
-          {cv.phone    && <div className="exec-contact-item">📞 {cv.phone}</div>}
-          {cv.email    && <div className="exec-contact-item">✉ {cv.email}</div>}
-          {cv.location && <div className="exec-contact-item">📍 {cv.location}</div>}
-          {cv.linkedin && <div className="exec-contact-item">🔗 {cv.linkedin}</div>}
+          {cv.phone         && <div className="exec-contact-item">📞 {cv.phone}</div>}
+          {cv.email         && <div className="exec-contact-item">✉ {cv.email}</div>}
+          {cv.location      && <div className="exec-contact-item">📍 {cv.location}</div>}
+          {cv.linkedin      && <div className="exec-contact-item">🔗 {cv.linkedin}</div>}
+          {cv.birthDate     && <div className="exec-contact-item">🎂 {cv.birthDate}{cv.birthPlace ? ` — ${cv.birthPlace}` : ""}</div>}
+          {cv.maritalStatus && <div className="exec-contact-item">💍 {cv.maritalStatus}</div>}
         </div>
         {cv.skills.length > 0 && (
           <div className="exec-sidebar-section">
@@ -564,10 +578,12 @@ function CreativeTemplate({ cv, t }) {
             <div className="creative-name">{cv.name || "Votre Nom"}</div>
             <div className="creative-title">{cv.title || "Titre Professionnel"}</div>
             <div className="creative-contacts">
-              {cv.phone    && <span className="creative-chip">📞 {cv.phone}</span>}
-              {cv.email    && <span className="creative-chip">✉ {cv.email}</span>}
-              {cv.location && <span className="creative-chip">📍 {cv.location}</span>}
-              {cv.linkedin && <span className="creative-chip">🔗 {cv.linkedin}</span>}
+              {cv.phone         && <span className="creative-chip">📞 {cv.phone}</span>}
+              {cv.email         && <span className="creative-chip">✉ {cv.email}</span>}
+              {cv.location      && <span className="creative-chip">📍 {cv.location}</span>}
+              {cv.linkedin      && <span className="creative-chip">🔗 {cv.linkedin}</span>}
+              {cv.birthDate     && <span className="creative-chip">🎂 {cv.birthDate}{cv.birthPlace ? ` · ${cv.birthPlace}` : ""}</span>}
+              {cv.maritalStatus && <span className="creative-chip">💍 {cv.maritalStatus}</span>}
             </div>
           </div>
         </div>
@@ -701,7 +717,16 @@ function TimelineTemplate({ cv, t }) {
         <h1 className="tl2-name">{cv.name || "Votre Nom"}</h1>
         <div className="tl2-title">{cv.title || "Titre Professionnel"}</div>
         <div className="tl2-contacts">
-          {[cv.phone, cv.email, cv.location, cv.linkedin].filter(Boolean).map((c, i) => (
+          {[
+            cv.phone,
+            cv.email,
+            cv.location,
+            cv.linkedin,
+            cv.birthDate
+              ? (cv.birthPlace ? `${cv.birthDate} · ${cv.birthPlace}` : cv.birthDate)
+              : null,
+            cv.maritalStatus,
+          ].filter(Boolean).map((c, i) => (
             <span key={i} className="tl2-contact-item">{c}</span>
           ))}
         </div>
@@ -789,23 +814,20 @@ function TimelineTemplate({ cv, t }) {
   )
 }
 
-
 // ────────────────────────────────────────────────────────────
-// TEMPLATE ROUGE
+// TEMPLATE IMPACT (rouge)
 // ────────────────────────────────────────────────────────────
 function ImpactTemplate({ cv, t }) {
   const initials = cv.name
     ? cv.name.split(" ").map(n => n[0]).slice(0,2).join("").toUpperCase()
     : null
 
-  // Check if aside has any content
   const hasAside = cv.skills.length > 0 || cv.languages.length > 0
     || (cv.certifications && cv.certifications.length > 0)
     || (cv.hobbies && cv.hobbies.length > 0)
 
   return (
     <div className="tpl-impact">
-      {/* ── Header ── */}
       <header className="impact-header">
         <div className="impact-header-left">
           <div className="impact-name">{cv.name || "Votre Nom"}</div>
@@ -827,17 +849,16 @@ function ImpactTemplate({ cv, t }) {
         </div>
       </header>
 
-      {/* ── Barre de contacts ── */}
       <div className="impact-contact-bar">
-        {cv.phone    && <span className="impact-contact-item"><span className="impact-contact-icon">T</span>{cv.phone}</span>}
-        {cv.email    && <span className="impact-contact-item"><span className="impact-contact-icon">@</span>{cv.email}</span>}
-        {cv.location && <span className="impact-contact-item"><span className="impact-contact-icon">L</span>{cv.location}</span>}
-        {cv.linkedin && <span className="impact-contact-item"><span className="impact-contact-icon">in</span>{cv.linkedin}</span>}
+        {cv.phone         && <span className="impact-contact-item"><span className="impact-contact-icon">T</span>{cv.phone}</span>}
+        {cv.email         && <span className="impact-contact-item"><span className="impact-contact-icon">@</span>{cv.email}</span>}
+        {cv.location      && <span className="impact-contact-item"><span className="impact-contact-icon">L</span>{cv.location}</span>}
+        {cv.linkedin      && <span className="impact-contact-item"><span className="impact-contact-icon">in</span>{cv.linkedin}</span>}
+        {cv.birthDate     && <span className="impact-contact-item"><span className="impact-contact-icon">🎂</span>{cv.birthDate}{cv.birthPlace ? ` · ${cv.birthPlace}` : ""}</span>}
+        {cv.maritalStatus && <span className="impact-contact-item"><span className="impact-contact-icon">💍</span>{cv.maritalStatus}</span>}
       </div>
 
-      {/* ── Corps ── */}
       <div className="impact-body">
-        {/* Colonne principale */}
         <div className="impact-main">
           {cv.experiences.length > 0 && (
             <section className="impact-section">
@@ -860,7 +881,6 @@ function ImpactTemplate({ cv, t }) {
               ))}
             </section>
           )}
-
           {cv.educations.length > 0 && (
             <section className="impact-section">
               <div className="impact-section-title">
@@ -882,7 +902,6 @@ function ImpactTemplate({ cv, t }) {
               ))}
             </section>
           )}
-
           {cv.projects && cv.projects.length > 0 && (
             <section className="impact-section">
               <div className="impact-section-title">
@@ -906,62 +925,59 @@ function ImpactTemplate({ cv, t }) {
           )}
         </div>
 
-        {/* Colonne latérale */}
-        {hasAside && <aside className="impact-aside">
-          {cv.skills.length > 0 && (
-            <div className="impact-aside-section">
-              <div className="impact-aside-title">{t("tplSkills")}</div>
-              {cv.skills.map((s) => (
-                <div key={s.id} className="impact-skill">
-                  <div className="impact-skill-name">{s.name}</div>
-                  <div className="impact-skill-track">
-                    <div className="impact-skill-fill" style={{ width: `${(s.level/5)*100}%` }} />
+        {hasAside && (
+          <aside className="impact-aside">
+            {cv.skills.length > 0 && (
+              <div className="impact-aside-section">
+                <div className="impact-aside-title">{t("tplSkills")}</div>
+                {cv.skills.map((s) => (
+                  <div key={s.id} className="impact-skill">
+                    <div className="impact-skill-name">{s.name}</div>
+                    <div className="impact-skill-track">
+                      <div className="impact-skill-fill" style={{ width: `${(s.level/5)*100}%` }} />
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {cv.languages.length > 0 && (
-            <div className="impact-aside-section">
-              <div className="impact-aside-title">{t("tplLangs")}</div>
-              {cv.languages.map((l) => (
-                <div key={l.id} className="impact-lang">
-                  <span>{l.name}</span>
-                  <span className="impact-lang-level">{l.level}</span>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {cv.certifications && cv.certifications.length > 0 && (
-            <div className="impact-aside-section">
-              <div className="impact-aside-title">{t("tplCerts")}</div>
-              {cv.certifications.map((c) => (
-                <div key={c.id} className="impact-cert">
-                  <div className="impact-cert-name">{c.name}</div>
-                  <div className="impact-cert-meta">{c.issuer}{c.date ? ` · ${c.date}` : ""}</div>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {cv.hobbies && cv.hobbies.length > 0 && (
-            <div className="impact-aside-section">
-              <div className="impact-aside-title">{t("tplHobbies")}</div>
-              <div className="impact-hobbies">
-                {cv.hobbies.map((h) => (
-                  <span key={h.id} className="impact-hobby">{h.name}</span>
                 ))}
               </div>
-            </div>
-          )}
-        </aside>}
+            )}
+            {cv.languages.length > 0 && (
+              <div className="impact-aside-section">
+                <div className="impact-aside-title">{t("tplLangs")}</div>
+                {cv.languages.map((l) => (
+                  <div key={l.id} className="impact-lang">
+                    <span>{l.name}</span>
+                    <span className="impact-lang-level">{l.level}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+            {cv.certifications && cv.certifications.length > 0 && (
+              <div className="impact-aside-section">
+                <div className="impact-aside-title">{t("tplCerts")}</div>
+                {cv.certifications.map((c) => (
+                  <div key={c.id} className="impact-cert">
+                    <div className="impact-cert-name">{c.name}</div>
+                    <div className="impact-cert-meta">{c.issuer}{c.date ? ` · ${c.date}` : ""}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+            {cv.hobbies && cv.hobbies.length > 0 && (
+              <div className="impact-aside-section">
+                <div className="impact-aside-title">{t("tplHobbies")}</div>
+                <div className="impact-hobbies">
+                  {cv.hobbies.map((h) => (
+                    <span key={h.id} className="impact-hobby">{h.name}</span>
+                  ))}
+                </div>
+              </div>
+            )}
+          </aside>
+        )}
       </div>
     </div>
   )
 }
-
 
 // ────────────────────────────────────────────────────────────
 // TEMPLATE ACADÉMIQUE
@@ -969,14 +985,22 @@ function ImpactTemplate({ cv, t }) {
 function AcademiqueTemplate({ cv, t }) {
   return (
     <div className="tpl-academique">
-      {/* ── En-tête centré ── */}
       <header className="acad-header">
         <div className="acad-header-inner">
           {cv.photo && <img src={cv.photo} alt="Photo" className="acad-photo" />}
           <h1 className="acad-name">{cv.name || "Votre Nom"}</h1>
           <div className="acad-title">{cv.title || "Titre Professionnel"}</div>
           <div className="acad-contacts">
-            {[cv.phone, cv.email, cv.location, cv.linkedin].filter(Boolean).map((info, i) => (
+            {[
+              cv.phone,
+              cv.email,
+              cv.location,
+              cv.linkedin,
+              cv.birthDate
+                ? (cv.birthPlace ? `${cv.birthDate} · ${cv.birthPlace}` : cv.birthDate)
+                : null,
+              cv.maritalStatus,
+            ].filter(Boolean).map((info, i) => (
               <span key={i} className="acad-contact">{info}</span>
             ))}
           </div>
@@ -984,7 +1008,6 @@ function AcademiqueTemplate({ cv, t }) {
         <div className="acad-rule" />
       </header>
 
-      {/* ── Corps ── */}
       <div className="acad-body">
         {cv.summary && (
           <section className="acad-section">
@@ -993,7 +1016,6 @@ function AcademiqueTemplate({ cv, t }) {
             <p className="acad-summary">{cv.summary}</p>
           </section>
         )}
-
         {cv.experiences.length > 0 && (
           <section className="acad-section">
             <h2 className="acad-section-title">{t("tplExp")}</h2>
@@ -1012,7 +1034,6 @@ function AcademiqueTemplate({ cv, t }) {
             ))}
           </section>
         )}
-
         {cv.educations.length > 0 && (
           <section className="acad-section">
             <h2 className="acad-section-title">{t("tplEdu")}</h2>
@@ -1031,7 +1052,6 @@ function AcademiqueTemplate({ cv, t }) {
             ))}
           </section>
         )}
-
         {cv.certifications && cv.certifications.length > 0 && (
           <section className="acad-section">
             <h2 className="acad-section-title">{t("tplCerts")}</h2>
@@ -1047,7 +1067,6 @@ function AcademiqueTemplate({ cv, t }) {
             ))}
           </section>
         )}
-
         {cv.projects && cv.projects.length > 0 && (
           <section className="acad-section">
             <h2 className="acad-section-title">{t("tplProjects")}</h2>
@@ -1063,7 +1082,6 @@ function AcademiqueTemplate({ cv, t }) {
             ))}
           </section>
         )}
-
         <div className="acad-two-col">
           {cv.skills.length > 0 && (
             <section className="acad-section">
@@ -1090,7 +1108,6 @@ function AcademiqueTemplate({ cv, t }) {
             </section>
           )}
         </div>
-
         {cv.hobbies && cv.hobbies.length > 0 && (
           <section className="acad-section">
             <h2 className="acad-section-title">{t("tplHobbies")}</h2>
@@ -1098,8 +1115,7 @@ function AcademiqueTemplate({ cv, t }) {
             <p className="acad-desc">{cv.hobbies.map(h => h.name).filter(Boolean).join(" · ")}</p>
           </section>
         )}
-
-        <CustomSectionsList sections={cv.customSections} titleClass="acad-section-title" t={t} />
+        <CustomSectionsList sections={cv.customSections} titleClass="acad-section-title" />
       </div>
     </div>
   )
@@ -1115,7 +1131,6 @@ function StartupTemplate({ cv, t }) {
 
   return (
     <div className="tpl-startup">
-      {/* ── Header asymétrique ── */}
       <div className="startup-header">
         <div className="startup-header-blob" />
         <div className="startup-header-content">
@@ -1132,14 +1147,15 @@ function StartupTemplate({ cv, t }) {
           </div>
         </div>
         <div className="startup-contacts">
-          {cv.phone    && <span className="startup-contact"><span className="startup-contact-icon">📞</span>{cv.phone}</span>}
-          {cv.email    && <span className="startup-contact"><span className="startup-contact-icon">✉</span>{cv.email}</span>}
-          {cv.location && <span className="startup-contact"><span className="startup-contact-icon">📍</span>{cv.location}</span>}
-          {cv.linkedin && <span className="startup-contact"><span className="startup-contact-icon">🔗</span>{cv.linkedin}</span>}
+          {cv.phone         && <span className="startup-contact"><span className="startup-contact-icon">📞</span>{cv.phone}</span>}
+          {cv.email         && <span className="startup-contact"><span className="startup-contact-icon">✉</span>{cv.email}</span>}
+          {cv.location      && <span className="startup-contact"><span className="startup-contact-icon">📍</span>{cv.location}</span>}
+          {cv.linkedin      && <span className="startup-contact"><span className="startup-contact-icon">🔗</span>{cv.linkedin}</span>}
+          {cv.birthDate     && <span className="startup-contact"><span className="startup-contact-icon">🎂</span>{cv.birthDate}{cv.birthPlace ? ` · ${cv.birthPlace}` : ""}</span>}
+          {cv.maritalStatus && <span className="startup-contact"><span className="startup-contact-icon">💍</span>{cv.maritalStatus}</span>}
         </div>
       </div>
 
-      {/* ── Corps ── */}
       <div className="startup-body">
         <div className="startup-main">
           {cv.experiences.length > 0 && (
@@ -1163,7 +1179,6 @@ function StartupTemplate({ cv, t }) {
               ))}
             </section>
           )}
-
           {cv.educations.length > 0 && (
             <section className="startup-section">
               <div className="startup-section-header">
@@ -1185,7 +1200,6 @@ function StartupTemplate({ cv, t }) {
               ))}
             </section>
           )}
-
           {cv.projects && cv.projects.length > 0 && (
             <section className="startup-section">
               <div className="startup-section-header">
@@ -1207,32 +1221,25 @@ function StartupTemplate({ cv, t }) {
               ))}
             </section>
           )}
-
-          <CustomSectionsList sections={cv.customSections} titleClass="startup-section-title" t={t} />
+          <CustomSectionsList sections={cv.customSections} titleClass="startup-section-title" />
         </div>
 
         <aside className="startup-aside">
           {cv.skills.length > 0 && (
             <div className="startup-aside-block">
-              <div className="startup-aside-title">
-                <span>⚡</span> {t("tplSkills")}
-              </div>
+              <div className="startup-aside-title"><span>⚡</span> {t("tplSkills")}</div>
               <div className="startup-skills-grid">
                 {cv.skills.map((s) => (
-                  <div key={s.id} className="startup-skill-chip"
-                    style={{ opacity: 0.5 + (s.level / 5) * 0.5 }}>
+                  <div key={s.id} className="startup-skill-chip" style={{ opacity: 0.5 + (s.level / 5) * 0.5 }}>
                     {s.name}
                   </div>
                 ))}
               </div>
             </div>
           )}
-
           {cv.languages.length > 0 && (
             <div className="startup-aside-block">
-              <div className="startup-aside-title">
-                <span>🌍</span> {t("tplLangs")}
-              </div>
+              <div className="startup-aside-title"><span>🌍</span> {t("tplLangs")}</div>
               {cv.languages.map((l) => (
                 <div key={l.id} className="startup-lang-row">
                   <span className="startup-lang-name">{l.name}</span>
@@ -1241,12 +1248,9 @@ function StartupTemplate({ cv, t }) {
               ))}
             </div>
           )}
-
           {cv.certifications && cv.certifications.length > 0 && (
             <div className="startup-aside-block">
-              <div className="startup-aside-title">
-                <span>🏆</span> {t("tplCerts")}
-              </div>
+              <div className="startup-aside-title"><span>🏆</span> {t("tplCerts")}</div>
               {cv.certifications.map((cert) => (
                 <div key={cert.id} className="startup-cert">
                   <div className="startup-cert-name">{cert.name}</div>
@@ -1255,12 +1259,9 @@ function StartupTemplate({ cv, t }) {
               ))}
             </div>
           )}
-
           {cv.hobbies && cv.hobbies.length > 0 && (
             <div className="startup-aside-block">
-              <div className="startup-aside-title">
-                <span>🎯</span> {t("tplHobbies")}
-              </div>
+              <div className="startup-aside-title"><span>🎯</span> {t("tplHobbies")}</div>
               <div className="startup-hobbies">
                 {cv.hobbies.map((h) => (
                   <span key={h.id} className="startup-hobby">{h.name}</span>
@@ -1280,12 +1281,12 @@ function StartupTemplate({ cv, t }) {
 export default function CVPreview({ cvData, t: tProp, className = "" }) {
   const t = tProp || ((k) => k)
   const templates = {
-    classic:   <ClassicTemplate   cv={cvData} t={t} />,
-    modern:    <ModernTemplate    cv={cvData} t={t} />,
-    minimal:   <MinimalTemplate   cv={cvData} t={t} />,
-    executive: <ExecutiveTemplate cv={cvData} t={t} />,
-    creative:  <CreativeTemplate  cv={cvData} t={t} />,
-    timeline:  <TimelineTemplate  cv={cvData} t={t} />,
+    classic:    <ClassicTemplate    cv={cvData} t={t} />,
+    modern:     <ModernTemplate     cv={cvData} t={t} />,
+    minimal:    <MinimalTemplate    cv={cvData} t={t} />,
+    executive:  <ExecutiveTemplate  cv={cvData} t={t} />,
+    creative:   <CreativeTemplate   cv={cvData} t={t} />,
+    timeline:   <TimelineTemplate   cv={cvData} t={t} />,
     impact:     <ImpactTemplate     cv={cvData} t={t} />,
     academique: <AcademiqueTemplate cv={cvData} t={t} />,
     startup:    <StartupTemplate    cv={cvData} t={t} />,

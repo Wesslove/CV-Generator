@@ -101,6 +101,9 @@ export const INITIAL_CV = {
     font:     "classic",
     density:  "normal",
   },
+  maritalStatus: "",
+  birthDate: "",
+  birthPlace: "",
 }
 
 // ── Version de l'application (pour notification de mise à jour)
@@ -162,6 +165,13 @@ export const I18N = {
     phLocation: "Paris, France",
     phLinkedin: "linkedin.com/in/...",
     phSummary:  "Décrivez votre profil en 2-3 phrases percutantes...",
+
+    birthDate:        "Date de naissance",
+    birthPlace:       "Lieu de naissance",
+    maritalStatus:    "Situation matrimoniale",
+    phBirthDate:      "Ex : 12/03/1990",
+    phBirthPlace:     "Ex : Paris, France",
+    phMaritalStatus:  "Ex : Célibataire, Marié(e)...",
     // Expériences
     company: "Entreprise", role: "Poste", period: "Période", description: "Description",
     phCompany: "Nom de l'entreprise", phRole: "Intitulé du poste",
@@ -274,6 +284,12 @@ export const I18N = {
     phLocation: "New York, USA",
     phLinkedin: "linkedin.com/in/...",
     phSummary:  "Describe your profile in 2-3 impactful sentences...",
+    birthDate:        "Date of birth",
+    birthPlace:       "Place of birth",
+    maritalStatus:    "Marital status",
+    phBirthDate:      "E.g. 03/12/1990",
+    phBirthPlace:     "E.g. London, UK",
+    phMaritalStatus:  "E.g. Single, Married...",
     company: "Company", role: "Position", period: "Period", description: "Description",
     phCompany: "Company name",    phRole:   "Job title",
     phPeriod:  "Jan 2022 – Present", phDesc: "Describe your responsibilities...",
