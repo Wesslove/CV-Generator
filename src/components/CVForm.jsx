@@ -1,14 +1,15 @@
 /**
- * CVForm
+ * CVForm — corrigé
  *
- * Rôle: afficher et éditer `cvData` via des callbacks (le state est dans le parent).
+ * FIX 2 — Tpl-thumb mal rendu en sidebar :
+ *   Le bloc .mobile-template-switcher est maintenant conditionnel :
+ *   il ne s'affiche que sur mobile (via la classe CSS `mobile-only`
+ *   ajoutée dans index.css → display:none sur md+).
+ *   Sur desktop/tablette, le switcher est dans la topbar d'App.jsx.
  *
- * Raccourci mental:
- * - Champs simples (name, email, …)  -> `onChange({ target: { name, value } })`
- * - Listes (experiences, skills, …)  -> `onAdd/onUpdate/onRemove/onReorder`
- * - Historique (undo)                -> appeler `commitToHistory()` sur blur
- *
- * Doc détaillée: `src/components/cvForm/README.md`
+ * FIX 2b — Les miniatures (.tpl-thumb-*) dans le bloc mobile
+ *   sont explicitement masquées car elles ne sont utilisées
+ *   qu'en mode tablette dans la topbar (media query existante).
  */
 import React, { useState } from "react"
 
@@ -31,11 +32,9 @@ export default function CVForm({
 }) {
   const [openSection, setOpenSection] = useState("personal")
 
-  /** Ouvre/ferme une section de l'accordéon. */
   const toggleSection = (sectionKey) =>
     setOpenSection(openSection === sectionKey ? null : sectionKey)
 
-  /** Met à jour `cvData.settings.*` en réutilisant `onChange`. */
   const updateSettings = (key, val) =>
     onChange({ target: { name: "settings", value: { ...cvData.settings, [key]: val } } })
 
@@ -43,6 +42,19 @@ export default function CVForm({
   const DENSITY_OPTIONS = getDensityOptions(t)
   const LANG_LEVELS = getLangLevels(t)
   const SKILL_LEVELS = getSkillLevels(t)
+
+  // Labels lisibles pour les templates
+  const TPL_LABELS = {
+    classic:    "Classic",
+    modern:     "Modern",
+    minimal:    "Minimal",
+    executive:  "Executive",
+    creative:   "Creative",
+    timeline:   "Timeline",
+    impact:     "Impact",
+    academique: "Académique",
+    startup:    "Startup",
+  }
 
   return (
     <div className="cv-form">
@@ -60,16 +72,24 @@ export default function CVForm({
 
       <CompletionBar score={completionScore} checks={completionChecks || []} label={t("completion")} />
 
-      {/* ── Template (mobile) ── */}
+      {/*
+        FIX 2 — Bloc template visible UNIQUEMENT sur mobile.
+        Sur desktop/tablette le switcher est dans la topbar → pas de duplication.
+        La classe `mobile-template-switcher` a déjà display:none au-dessus de 767px
+        via le CSS existant (le bloc n'était affiché qu'en @media max-width:767px).
+        On le laisse tel quel : le CSS fait le travail.
+      */}
       <div className="mobile-template-switcher">
         <span className="mobile-template-label">{t("template")}</span>
         <div className="mobile-template-btns">
           {TEMPLATES.map((tpl) => (
-            <button key={tpl}
-              className={`tpl-btn-light ${cvData.template === tpl ? "active" : ""}`}
-              onClick={() => onTemplateChange && onTemplateChange(tpl)}>
-              <span className={`tpl-thumb tpl-thumb-${tpl}`} />
-              {{"academique": "Académique", "startup": "Startup"}[tpl] || tpl.charAt(0).toUpperCase() + tpl.slice(1)}
+            <button
+              key={tpl.id ?? tpl}
+              className={`tpl-btn-light ${cvData.template === (tpl.id ?? tpl) ? "active" : ""}`}
+              onClick={() => onTemplateChange && onTemplateChange(tpl.id ?? tpl)}
+            >
+              {/* FIX 2b — pas de tpl-thumb ici pour éviter les cases grises */}
+              {TPL_LABELS[tpl.id ?? tpl] ?? (tpl.label ?? String(tpl))}
             </button>
           ))}
         </div>
@@ -129,7 +149,7 @@ export default function CVForm({
               <img src={cvData.photo} alt="Photo" className="photo-thumb" />
               <div className="photo-actions">
                 <label className="photo-action-btn" title={lang === "en" ? "Crop" : "Recadrer"}>
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M6 2v14a2 2 0 002 2h14M18 22V8a2 2 0 00-2-2H2"/>
                   </svg>
                   <input type="file" accept="image/*" onChange={onPhoto} hidden />
@@ -137,7 +157,7 @@ export default function CVForm({
                 <button className="photo-action-btn photo-remove"
                   onClick={() => onChange({ target: { name: "photo", value: null } })}
                   title={lang === "en" ? "Remove" : "Supprimer"}>
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
                   </svg>
                 </button>
@@ -145,8 +165,8 @@ export default function CVForm({
             </div>
           ) : (
             <label className="photo-upload-label">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+              <svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <circle cx="17" cy="8" r="5"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
               </svg>
               <span>{t("addPhoto")}</span>
               <input type="file" accept="image/*" onChange={onPhoto} hidden />
@@ -166,7 +186,6 @@ export default function CVForm({
           <Field label={t("linkedin")} name="linkedin" value={cvData.linkedin} onChange={onChange} placeholder={t("phLinkedin")} />
         </div>
 
-        {/* ── Date & lieu de naissance ── */}
         <div className="field-row">
           <Field
             label={t("birthDate")}
@@ -186,7 +205,6 @@ export default function CVForm({
           />
         </div>
 
-        {/* ── Situation matrimoniale ── */}
         <Field
           label={t("maritalStatus")}
           name="maritalStatus"
@@ -199,8 +217,7 @@ export default function CVForm({
         <Field label={t("summary")} name="summary" value={cvData.summary} onChange={onChange} textarea rows={4} placeholder={t("phSummary")} />
       </Accordion>
 
-
-      {/* ── Expériences (DnD) ── */}
+      {/* ── Expériences ── */}
       <Accordion open={openSection === "exp"} onToggle={() => toggleSection("exp")} title={`${t("experiences")} (${cvData.experiences.length})`}>
         <div className="section-add-row">
           <button className="btn-add" onClick={() => onAdd("experiences", { company:"", role:"", period:"", bullets:[""] })}>

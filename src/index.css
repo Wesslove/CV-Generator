@@ -1008,3 +1008,21 @@ body.dark .tpl-executive .exec-no-photo { background: #444; color: #cdd6f4; }
     display: none !important;
   }
 }
+
+.scrollbar-none {
+  scrollbar-width: none;        /* Firefox */
+  -ms-overflow-style: none;     /* IE/Edge */
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;                /* Chrome/Safari */
+}
+ 
+/* Fix 2 — .mobile-template-switcher doit rester caché sur md+
+   (le CSS existant le cache déjà via @media max-width:767px,
+    mais on s'assure qu'il n'apparaît jamais sur desktop) */
+@media (min-width: 768px) {
+  .mobile-template-switcher {
+    display: none !important;
+  }
+}
+ 
