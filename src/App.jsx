@@ -1,8 +1,17 @@
 // ─────────────────────────────────────────────────────────────
-// App.jsx — corrigé
-// Fix 1 : setTemplate décommenté (bug runtime résolu)
-// Fix 2 : template switcher topbar masqué sur mobile (évite la duplication)
-// Fix 3 : topbar switcher avec overflow-x auto + flex-shrink sur les boutons
+// App.jsx — migré Tailwind CDN
+// Classes CSS custom supprimées : app-layout, top-bar, top-bar-brand,
+// brand-name, template-switcher, switcher-label, tpl-btn, main-content,
+// form-sidebar, mobile-hidden, preview-area, preview-controls,
+// preview-label, zoom-controls, zoom-btn, zoom-pct, print-btn,
+// btn-secondary, btn-undo, preview-actions, preview-scroll,
+// import-warning, mobile-bottom-nav, mob-nav-btn, mob-nav-pdf
+//
+// Conservées dans index.css (dynamiques ou print) :
+//   .tpl-btn.active         → dépend de --accent via useCssVars
+//   .mobile-hidden          → peut rester ou être géré inline (voir ci-dessous)
+//   @media print            → intouché
+//   update-notice           → petit composant isolé, gardé tel quel
 // ─────────────────────────────────────────────────────────────
 
 import React, { useEffect, useState, useRef } from "react"
@@ -110,8 +119,6 @@ export default function App() {
   const updateItem  = (section, id, name, value) => dispatch({ type: "UPDATE_ITEM",  section, id, name, value })
   const removeItem  = (section, id)              => dispatch({ type: "REMOVE_ITEM",  section, id })
   const reorderItem = (section, from, to)        => dispatch({ type: "REORDER_ITEM", section, from, to })
-
-  // FIX 1 — setTemplate était commenté → erreur runtime "setTemplate is not defined"
   const setTemplate = (tpl) => dispatch({ type: "SET_FIELD", name: "template", value: tpl })
 
   const addCustomSection    = ()                    => dispatch({ type: "ADD_CUSTOM_SECTION" })
@@ -152,8 +159,11 @@ export default function App() {
   }
 
   const printPDF = () => {
+    // Sauvegarder le zoom actuel, forcer 100% pour l'impression,
+    // puis restaurer après — évite la 2e page vide causée par scale()
     const savedZoom = zoom
     setZoom(100)
+    // Laisser React re-render avant d'ouvrir la boîte impression
     setTimeout(() => {
       window.print()
       setZoom(savedZoom)
@@ -167,8 +177,11 @@ export default function App() {
   // Rendu
   // ─────────────────────────────────────────────────────────
   return (
+    // ── Conteneur racine ──────────────────────────────────
+    // id="app-root" → ciblé par @media print dans index.css
     <div id="app-root" className="app-root">
 
+      {/* Modal recadrage photo */}
       {cropSrc && (
         <PhotoCropModal
           src={cropSrc}
@@ -179,10 +192,12 @@ export default function App() {
       )}
 
       {/* ── Barre supérieure ─────────────────────────────── */}
-      <header id="app-topbar" className="h-[52px] bg-[#1e1e2e] flex items-center px-5 gap-4 shrink-0 border-b border-white/[0.06] relative overflow-hidden">
+      {/* id="app-topbar" → masqué à l'impression via @media print */}
+      <header id="app-topbar" className="h-[52px] bg-[#1e1e2e] flex items-center px-5 gap-6 shrink-0 border-b border-white/[0.06] relative">
 
         {/* Marque */}
-        <div className="flex items-center shrink-0">
+        {/* top-bar-brand + brand-name */}
+        <div className="flex items-center">
           <span className="text-white text-[17px] font-bold tracking-tight">
             <em className="text-[#89b4fa] not-italic">&lt;</em>
             {" "}W{" "}
@@ -190,22 +205,21 @@ export default function App() {
           </span>
         </div>
 
-        {/*
-          FIX 2 & 3 — Template switcher :
-          - hidden sur mobile (md:flex) → évite la duplication avec le bloc
-            "Modèles" dans CVForm qui s'affiche uniquement sur mobile
-          - overflow-x auto sur le conteneur pour éviter la troncature sur tablette
-          - flex-shrink-0 sur chaque bouton pour qu'ils ne se compressent pas
-        */}
-        <div className="hidden md:flex items-center gap-1.5 ml-auto overflow-x-auto max-w-full scrollbar-none">
-          <span className="hidden lg:block text-[#cdd6f4] text-[13px] opacity-60 mr-1 shrink-0">
+        {/* Sélecteur de templates */}
+        {/* template-switcher → flex items-center gap-1.5 ml-auto */}
+        <div className="flex items-center gap-1.5 ml-auto">
+          {/* switcher-label → text-[#cdd6f4] text-[13px] opacity-60 mr-1 — masqué sur tablette */}
+          <span className="hidden lg:block text-[#cdd6f4] text-[13px] opacity-60 mr-1">
             {t("template")}
           </span>
 
           {TEMPLATES.map((tpl) => (
+            // tpl-btn → classes de base communes
+            // tpl-btn.active → géré via la classe .tpl-btn.active dans index.css
+            // (conservée car elle utilise --accent + --sidebar-bg dynamiques via useCssVars)
             <button
               key={tpl.id}
-              className={`tpl-btn shrink-0 ${cvData.template === tpl.id ? "active" : ""}`}
+              className={`tpl-btn ${cvData.template === tpl.id ? "active" : ""}`}
               onClick={() => setTemplate(tpl.id)}
             >
               <span className={`tpl-thumb tpl-thumb-${tpl.id}`} />
@@ -216,6 +230,7 @@ export default function App() {
 
         {/* Bandeau mise à jour */}
         {showUpdateNotice && (
+          // update-notice → conservé dans index.css (position absolute sur mobile)
           <div className="update-notice">
             {t("updateDone")} – {t("newFeature")}
             <button className="update-dismiss" onClick={() => setShowUpdateNotice(false)}>×</button>
@@ -224,8 +239,12 @@ export default function App() {
       </header>
 
       {/* ── Contenu principal ────────────────────────────── */}
+      {/* id="app-content" → ciblé par @media print */}
       <div id="app-content" className="app-content">
 
+        {/* Sidebar — classe CSS statique .app-sidebar dans index.css
+            Tailwind CDN ne détecte pas les classes construites dynamiquement au runtime.
+            La visibilité + largeur responsive sont gérées en CSS pur via data-hidden */}
         <aside
           id="app-sidebar"
           className="app-sidebar"
@@ -250,6 +269,12 @@ export default function App() {
           />
         </aside>
 
+        {/* Aperçu — zone droite */}
+        {/*
+          preview-area → flex flex-1 flex-col overflow-hidden bg-[#f4f3f0]
+          mobile-hidden → hidden quand onglet "edit"
+        */}
+        {/* Preview — même raison : classe CSS statique .app-preview */}
         <main
           id="app-preview"
           className="app-preview"
@@ -259,17 +284,22 @@ export default function App() {
           {/* Barre de contrôles aperçu */}
           <div id="app-preview-controls" className="flex items-center justify-between px-6 py-3 border-b border-zinc-200 bg-white">
 
+            {/* preview-label → text-[13px] text-zinc-400 font-medium */}
             <span className="text-[13px] text-zinc-400 font-medium">
               {t("livePreview")}
             </span>
 
+            {/* Contrôles zoom */}
+            {/* zoom-controls → flex items-center gap-1 bg-zinc-100 border border-zinc-200 rounded-lg px-1.5 py-[3px] */}
             <div className="flex items-center gap-1 bg-zinc-100 border border-zinc-200 rounded-lg px-1.5 py-[3px]">
+              {/* zoom-btn → w-[26px] h-[26px] border-none bg-transparent text-zinc-900 text-base font-semibold cursor-pointer rounded-md flex items-center justify-center hover:bg-zinc-200 transition-colors leading-none */}
               <button
                 className="w-[26px] h-[26px] border-none bg-transparent text-zinc-900 text-base font-semibold cursor-pointer rounded-md flex items-center justify-center hover:bg-zinc-200 transition-colors leading-none"
                 onClick={zoomOut}
                 title={t("zoomOut")}
               >−</button>
 
+              {/* zoom-pct → text-[13px] font-semibold text-zinc-900 min-w-[38px] text-center select-none */}
               <span className="text-[13px] font-semibold text-zinc-900 min-w-[38px] text-center select-none">
                 {zoom}%
               </span>
@@ -280,6 +310,7 @@ export default function App() {
                 title={t("zoomIn")}
               >+</button>
 
+              {/* zoom-reset → même base + text-sm */}
               <button
                 className="w-[26px] h-[26px] border-none bg-transparent text-zinc-900 text-sm font-semibold cursor-pointer rounded-md flex items-center justify-center hover:bg-zinc-200 transition-colors leading-none"
                 onClick={zoomReset}
@@ -287,8 +318,12 @@ export default function App() {
               >↺</button>
             </div>
 
+            {/* Actions (undo, PDF, export, import) */}
+            {/* preview-actions → flex items-center gap-2 */}
             <div className="flex items-center gap-2">
 
+              {/* Bouton Annuler */}
+              {/* print-btn btn-secondary btn-undo → base commune + variante secondaire */}
               <button
                 className="flex items-center gap-2 px-[18px] py-2 rounded-lg text-sm font-semibold transition-colors duration-200 cursor-pointer bg-slate-100 hover:bg-slate-200 text-slate-700 border border-zinc-200 disabled:opacity-40 disabled:cursor-not-allowed"
                 onClick={undo}
@@ -301,6 +336,8 @@ export default function App() {
                 {t("undo")}
               </button>
 
+              {/* Bouton PDF — primaire */}
+              {/* print-btn → flex items-center gap-2 px-[18px] py-2 bg-[--accent] text-white rounded-lg text-sm font-semibold */}
               <button
                 className="flex items-center gap-2 px-[18px] py-2 bg-blue-600 hover:bg-blue-700 active:scale-[0.97] text-white border-none rounded-lg cursor-pointer text-sm font-semibold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                 onClick={printPDF}
@@ -314,6 +351,7 @@ export default function App() {
                 {t("downloadPdf")}
               </button>
 
+              {/* Bouton Export JSON — secondaire */}
               <button
                 className="flex items-center gap-2 px-[18px] py-2 rounded-lg text-sm font-semibold transition-colors duration-200 cursor-pointer bg-slate-100 hover:bg-slate-200 text-slate-700 border border-zinc-200"
                 onClick={downloadJSON}
@@ -325,6 +363,7 @@ export default function App() {
                 {t("export")}
               </button>
 
+              {/* Bouton Import JSON — secondaire */}
               <button
                 className="flex items-center gap-2 px-[18px] py-2 rounded-lg text-sm font-semibold transition-colors duration-200 cursor-pointer bg-slate-100 hover:bg-slate-200 text-slate-700 border border-zinc-200"
                 onClick={() => importRef.current.click()}
@@ -339,12 +378,16 @@ export default function App() {
             </div>
           </div>
 
+          {/* Bandeau avertissement import */}
+          {/* import-warning → bg-amber-50 border-b border-amber-200 text-amber-800 text-[13px] px-6 py-2.5 flex items-center gap-2 */}
           {importMsg && (
             <div className="bg-amber-50 border-b border-amber-200 text-amber-800 text-[13px] px-6 py-2.5 flex items-center gap-2">
               {importMsg}
             </div>
           )}
 
+          {/* Zone de défilement du CV avec zoom */}
+          {/* id="app-preview-scroll" → ciblé par @media print pour annuler le zoom */}
           <div id="app-preview-scroll" className="flex-1 overflow-y-auto flex justify-center pt-8 px-6 pb-[60px] items-start">
             <div id="zoom-wrapper" style={{ transform: `scale(${zoom / 100})`, transformOrigin: "top center", transition: "transform 0.2s ease" }}>
               <CVPreview cvData={cvData} t={t} />
@@ -353,9 +396,18 @@ export default function App() {
         </main>
       </div>
 
-      {/* ── Navigation mobile ────────────────────────────── */}
+      {/* ── Navigation mobile (barre en bas) ────────────── */}
+      {/* id="app-mobile-nav" → masqué à l'impression */}
       <nav id="app-mobile-nav" className="fixed bottom-0 left-0 right-0 h-16 bg-[#1e1e2e] border-t border-white/[0.08] z-[1000] flex md:hidden">
 
+        {/* Onglet Édition */}
+        {/*
+          mob-nav-btn → flex-1 flex flex-col items-center justify-center gap-1
+                        bg-transparent border-none text-white/45 font-medium
+                        text-[11px] cursor-pointer transition-all py-2
+          mob-nav-btn.active → text-[#89b4fa]
+          ::after (indicateur) → géré inline avec un div conditionnel
+        */}
         <button
           className={[
             "flex-1 flex flex-col items-center justify-center gap-1 bg-transparent border-none font-medium text-[11px] cursor-pointer transition-all py-2 relative",
@@ -376,6 +428,7 @@ export default function App() {
           )}
         </button>
 
+        {/* Onglet Annuler */}
         <button
           className="flex-1 flex flex-col items-center justify-center gap-1 bg-transparent border-none text-white/45 hover:text-[#89b4fa] font-medium text-[11px] cursor-pointer transition-all py-2 disabled:opacity-30 disabled:cursor-not-allowed"
           onClick={undo}
@@ -387,6 +440,7 @@ export default function App() {
           <span>{t("undo")}</span>
         </button>
 
+        {/* Onglet Aperçu */}
         <button
           className={[
             "flex-1 flex flex-col items-center justify-center gap-1 bg-transparent border-none font-medium text-[11px] cursor-pointer transition-all py-2 relative",
@@ -407,6 +461,8 @@ export default function App() {
           )}
         </button>
 
+        {/* Bouton PDF */}
+        {/* mob-nav-pdf → bg-blue-600/15 hover:bg-blue-600/30 hover:text-blue-300 */}
         <button
           className="flex-1 flex flex-col items-center justify-center gap-1 border-none text-white/45 hover:text-blue-300 font-medium text-[11px] cursor-pointer transition-all py-2 bg-blue-600/15 hover:bg-blue-600/30"
           onClick={printPDF}
