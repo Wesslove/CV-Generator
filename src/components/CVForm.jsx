@@ -104,7 +104,7 @@ export default function CVForm({
             <input type="color" value={cvData.settings.accent}
               onChange={e => updateSettings("accent", e.target.value)} className="color-input" />
             <span className="color-hex">{cvData.settings.accent}</span>
-            {["#2563eb","#dc2626","#16a34a","#7c3aed","#ea580c","#0f172a"].map(c => (
+              {["#1e3a5f","#0f4c81","#1a5276","#1b4332","#4a1942","#2c3e50"].map(c => (
               <button key={c} className="color-swatch" style={{ background: c }}
                 onClick={() => updateSettings("accent", c)} title={c} />
             ))}

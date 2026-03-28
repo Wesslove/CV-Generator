@@ -66,7 +66,7 @@ export const DENSITY_OPTIONS = [
 
 // ── Couleurs de sélection rapide ──────────────────────────────
 export const ACCENT_PRESETS = [
-  "#2563eb", // bleu
+  "#1e3a5f", // bleu
   "#dc2626", // rouge
   "#16a34a", // vert
   "#7c3aed", // violet
