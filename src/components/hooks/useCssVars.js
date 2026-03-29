@@ -30,7 +30,7 @@ function adjustHexColor(hex, amt) {
  */
 export function useCssVars(settings) {
   useEffect(() => {
-    const { accent = "#2563eb", font = "classic", density = "normal", theme = "light" } = settings
+    const { accent = "#1e3a5f", font = "classic", density = "normal", theme = "light" } = settings
 
     // ── Couleur d'accent ──────────────────────────────────────
     document.documentElement.style.setProperty("--accent", accent)

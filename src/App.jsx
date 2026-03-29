@@ -159,16 +159,14 @@ export default function App() {
   }
 
   const printPDF = () => {
-    // Sauvegarder le zoom actuel, forcer 100% pour l'impression,
-    // puis restaurer après — évite la 2e page vide causée par scale()
     const savedZoom = zoom
     setZoom(100)
-    // Laisser React re-render avant d'ouvrir la boîte impression
     setTimeout(() => {
       window.print()
-      setZoom(savedZoom)
-    }, 80)
+      setTimeout(() => setZoom(savedZoom), 500)
+    }, 200)
   }
+
   const zoomIn    = () => setZoom((z) => Math.min(150, z + 10))
   const zoomOut   = () => setZoom((z) => Math.max(50,  z - 10))
   const zoomReset = () => setZoom(100)
@@ -193,40 +191,34 @@ export default function App() {
 
       {/* ── Barre supérieure ─────────────────────────────── */}
       {/* id="app-topbar" → masqué à l'impression via @media print */}
-      <header id="app-topbar" className="h-[52px] bg-[#1e1e2e] flex items-center px-5 gap-6 shrink-0 border-b border-white/[0.06] relative">
+      <header id="app-topbar" className="h-[52px] bg-[#1e1e2e] flex items-center px-5 gap-6 shrink-0 border-b border-white/[0.06] relative overflow-hidden">
 
-        {/* Marque */}
-        {/* top-bar-brand + brand-name */}
-        <div className="flex items-center">
-          <span className="text-white text-[17px] font-bold tracking-tight">
-            <em className="text-[#89b4fa] not-italic">&lt;</em>
-            {" "}W{" "}
-            <em className="text-[#89b4fa] not-italic">/&gt;</em>
-          </span>
-        </div>
+      {/* Marque */}
+      <div className="flex items-center shrink-0">
+        <span className="text-white text-[17px] font-bold tracking-tight">
+          <em className="text-[#89b4fa] not-italic">&lt;</em>
+          {" "}W{" "}
+          <em className="text-[#89b4fa] not-italic">/&gt;</em>
+        </span>
+      </div>
 
         {/* Sélecteur de templates */}
         {/* template-switcher → flex items-center gap-1.5 ml-auto */}
-        <div className="flex items-center gap-1.5 ml-auto">
-          {/* switcher-label → text-[#cdd6f4] text-[13px] opacity-60 mr-1 — masqué sur tablette */}
-          <span className="hidden lg:block text-[#cdd6f4] text-[13px] opacity-60 mr-1">
-            {t("template")}
-          </span>
-
-          {TEMPLATES.map((tpl) => (
-            // tpl-btn → classes de base communes
-            // tpl-btn.active → géré via la classe .tpl-btn.active dans index.css
-            // (conservée car elle utilise --accent + --sidebar-bg dynamiques via useCssVars)
-            <button
-              key={tpl.id}
-              className={`tpl-btn ${cvData.template === tpl.id ? "active" : ""}`}
-              onClick={() => setTemplate(tpl.id)}
-            >
-              <span className={`tpl-thumb tpl-thumb-${tpl.id}`} />
-              {tpl.label}
-            </button>
-          ))}
-        </div>
+        <div className="hidden md:flex items-center gap-1.5 ml-auto">
+  <span className="hidden lg:block text-[#cdd6f4] text-[13px] opacity-60 mr-1">
+    {t("template")}
+  </span>
+  {TEMPLATES.map((tpl) => (
+    <button
+      key={tpl.id}
+      className={`tpl-btn ${cvData.template === tpl.id ? "active" : ""}`}
+      onClick={() => setTemplate(tpl.id)}
+    >
+      <span className={`tpl-thumb tpl-thumb-${tpl.id}`} />
+      {tpl.label}
+    </button>
+  ))}
+</div>
 
         {/* Bandeau mise à jour */}
         {showUpdateNotice && (
