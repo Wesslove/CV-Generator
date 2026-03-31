@@ -1,6 +1,7 @@
 import React from "react"
 
-export default function BulletsEditor({ bullets = [""], onChange, onCommit, placeholder }) {
+export default function BulletsEditor({ bullets = [""], onChange, onCommit, placeholder, lang = "fr" }) {
+
   const handleBullet = (i, val) => {
     const next = [...bullets]
     next[i] = val
@@ -49,13 +50,14 @@ export default function BulletsEditor({ bullets = [""], onChange, onCommit, plac
           )}
         </div>
       ))}
-      <button className="bullet-add" onClick={addBullet}>
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-          <line x1="12" y1="5" x2="12" y2="19" />
-          <line x1="5" y1="12" x2="19" y2="12" />
-        </svg>
-        Ajouter une ligne
-      </button>
+       // texte traduit selon la langue
+        <button className="bullet-add" onClick={addBullet}>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+            <line x1="12" y1="5" x2="12" y2="19" />
+            <line x1="5" y1="12" x2="19" y2="12" />
+          </svg>
+          {lang === "en" ? "Add line" : "Ajouter une ligne"}
+        </button>
     </div>
   )
 }

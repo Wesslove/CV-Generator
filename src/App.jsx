@@ -254,10 +254,11 @@ export default function App() {
             onUpdateCustomSection={updateCustomSection}
             onRemoveCustomSection={removeCustomSection}
             onAddCustomItem={addCustomItem}
-            onRemoveCustomItem={removeCustomItem}
             onUpdateCustomItem={updateCustomItem}
+            onRemoveCustomItem={removeCustomItem}
             commitToHistory={commitToHistory}
-            lang={lang} t={t}
+            t={t}
+            lang={lang}
           />
         </aside>
 

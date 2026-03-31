@@ -977,14 +977,57 @@ body.dark .tpl-executive .exec-no-photo { background: #444; color: #cdd6f4; }
     page-break-after: avoid !important;
   }
 
-  /* Éviter les coupures dans le contenu */
+  /* Le CV peut s'étendre sur plusieurs pages si nécessaire */
+  #cv-preview,
+  .cv-paper {
+    height: auto !important;
+    min-height: auto !important;
+    page-break-inside: auto !important;
+  }
+
+  /* Éviter les coupures à l'intérieur des entrées */
   .timeline-item,
   .modern-entry,
   .exec-entry,
   .creative-entry,
   .impact-entry,
-  .tl2-node {
+  .tl2-node,
+  .min-entry,
+  .startup-card,
+  .acad-entry,
+  .classic-skill-item,
+  .cert-item,
+  .proj-item {
     page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* Les titres restent collés à leur contenu */
+  .classic-section-title,
+  .modern-section-title,
+  .exec-section-title,
+  .creative-main-label,
+  .impact-section-title,
+  .tl2-col-header,
+  .min-section h3,
+  .startup-aside-title,
+  .startup-section-title,
+  .acad-section-title {
+    page-break-after: avoid !important;
+    break-after: avoid !important;
+  }
+
+  /* Éviter une coupure juste après les headers */
+  .classic-header,
+  .modern-header,
+  .exec-header,
+  .creative-hero,
+  .impact-header,
+  .impact-contact-bar,
+  .tl2-header,
+  .startup-header {
+    page-break-after: avoid !important;
+    break-after: avoid !important;
   }
 }
 

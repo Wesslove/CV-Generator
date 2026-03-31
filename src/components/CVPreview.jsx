@@ -436,7 +436,7 @@ function MinimalTemplate({ cv, t }) {
               ))}
             </section>
           )}
-          <CustomSectionsList sections={cv.customSections} titleClass="min-section h3" />
+          <CustomSectionsList sections={cv.customSections} titleClass="min-section" />
         </div>
       </div>
     </div>
