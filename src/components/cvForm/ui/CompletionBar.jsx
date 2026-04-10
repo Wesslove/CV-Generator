@@ -1,3 +1,9 @@
+/**
+ * CompletionBar
+ *
+ * Affiche le score de completion (0-100) et
+ * une liste courte d'actions manquantes.
+ */
 import React from "react"
 
 export default function CompletionBar({ score, checks, label }) {

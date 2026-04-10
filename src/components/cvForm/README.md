@@ -58,7 +58,7 @@ Va dans `cvForm/dnd/` :
 
 #### 4) Ajouter/retirer un template, options, niveaux
 
-- `constants.js`
+- `src/constants.js`
   - `TEMPLATES`
   - `getFontOptions(t)`, `getDensityOptions(t)`, `getLangLevels(t)`, `getSkillLevels(t)`
 

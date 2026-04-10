@@ -1,3 +1,11 @@
+/**
+ * BulletsEditor
+ *
+ * Editeur de lignes a puces:
+ * - Enter ajoute une ligne
+ * - Backspace supprime une ligne vide
+ * - onChange remonte le tableau de lignes au parent
+ */
 import React from "react"
 
 export default function BulletsEditor({ bullets = [""], onChange, onCommit, placeholder, lang = "fr" }) {

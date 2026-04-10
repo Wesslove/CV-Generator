@@ -1,3 +1,9 @@
+/**
+ * SortableCard
+ *
+ * Carte draggable individuelle avec "drag handle".
+ * Utilisee dans les sections dynamiques (experiences, skills, etc.).
+ */
 import React from "react"
 import { useSortable } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"

@@ -18,6 +18,9 @@ import React, { useEffect, useState, useRef } from "react"
 import CVForm         from "./components/CVForm"
 import CVPreview      from "./components/CVPreview"
 import PhotoCropModal from "./components/PhotoCropModal"
+import TopBar from "./components/appShell/TopBar"
+import PreviewToolbar from "./components/appShell/PreviewToolbar"
+import MobileNav from "./components/appShell/MobileNav"
 
 import { cvReducer }       from "./reducer"
 import { useUndoReducer }  from "./components/hooks/useUndoReducer"
@@ -189,46 +192,14 @@ export default function App() {
         />
       )}
 
-      {/* ── Barre supérieure ─────────────────────────────── */}
-      {/* id="app-topbar" → masqué à l'impression via @media print */}
-      <header id="app-topbar" className="h-[52px] bg-[#1e1e2e] flex items-center px-5 gap-6 shrink-0 border-b border-white/[0.06] relative overflow-hidden">
-
-      {/* Marque */}
-      <div className="flex items-center shrink-0">
-        <span className="text-white text-[17px] font-bold tracking-tight">
-          <em className="text-[#89b4fa] not-italic">&lt;</em>
-          {" "}W{" "}
-          <em className="text-[#89b4fa] not-italic">/&gt;</em>
-        </span>
-      </div>
-
-        {/* Sélecteur de templates */}
-        {/* template-switcher → flex items-center gap-1.5 ml-auto */}
-        <div className="hidden md:flex items-center gap-1.5 ml-auto">
-  <span className="hidden lg:block text-[#cdd6f4] text-[13px] opacity-60 mr-1">
-    {t("template")}
-  </span>
-  {TEMPLATES.map((tpl) => (
-    <button
-      key={tpl.id}
-      className={`tpl-btn ${cvData.template === tpl.id ? "active" : ""}`}
-      onClick={() => setTemplate(tpl.id)}
-    >
-      <span className={`tpl-thumb tpl-thumb-${tpl.id}`} />
-      {tpl.label}
-    </button>
-  ))}
-</div>
-
-        {/* Bandeau mise à jour */}
-        {showUpdateNotice && (
-          // update-notice → conservé dans index.css (position absolute sur mobile)
-          <div className="update-notice">
-            {t("updateDone")} – {t("newFeature")}
-            <button className="update-dismiss" onClick={() => setShowUpdateNotice(false)}>×</button>
-          </div>
-        )}
-      </header>
+      <TopBar
+        t={t}
+        templates={TEMPLATES}
+        currentTemplate={cvData.template}
+        onTemplateChange={setTemplate}
+        showUpdateNotice={showUpdateNotice}
+        onDismissUpdate={() => setShowUpdateNotice(false)}
+      />
 
       {/* ── Contenu principal ────────────────────────────── */}
       {/* id="app-content" → ciblé par @media print */}
@@ -274,102 +245,21 @@ export default function App() {
           data-hidden={mobileTab !== "preview" ? "true" : "false"}
         >
 
-          {/* Barre de contrôles aperçu */}
-          <div id="app-preview-controls" className="flex items-center justify-between px-6 py-3 border-b border-zinc-200 bg-white">
-
-            {/* preview-label → text-[13px] text-zinc-400 font-medium */}
-            <span className="text-[13px] text-zinc-400 font-medium">
-              {t("livePreview")}
-            </span>
-
-            {/* Contrôles zoom */}
-            {/* zoom-controls → flex items-center gap-1 bg-zinc-100 border border-zinc-200 rounded-lg px-1.5 py-[3px] */}
-            <div className="flex items-center gap-1 bg-zinc-100 border border-zinc-200 rounded-lg px-1.5 py-[3px]">
-              {/* zoom-btn → w-[26px] h-[26px] border-none bg-transparent text-zinc-900 text-base font-semibold cursor-pointer rounded-md flex items-center justify-center hover:bg-zinc-200 transition-colors leading-none */}
-              <button
-                className="w-[26px] h-[26px] border-none bg-transparent text-zinc-900 text-base font-semibold cursor-pointer rounded-md flex items-center justify-center hover:bg-zinc-200 transition-colors leading-none"
-                onClick={zoomOut}
-                title={t("zoomOut")}
-              >−</button>
-
-              {/* zoom-pct → text-[13px] font-semibold text-zinc-900 min-w-[38px] text-center select-none */}
-              <span className="text-[13px] font-semibold text-zinc-900 min-w-[38px] text-center select-none">
-                {zoom}%
-              </span>
-
-              <button
-                className="w-[26px] h-[26px] border-none bg-transparent text-zinc-900 text-base font-semibold cursor-pointer rounded-md flex items-center justify-center hover:bg-zinc-200 transition-colors leading-none"
-                onClick={zoomIn}
-                title={t("zoomIn")}
-              >+</button>
-
-              {/* zoom-reset → même base + text-sm */}
-              <button
-                className="w-[26px] h-[26px] border-none bg-transparent text-zinc-900 text-sm font-semibold cursor-pointer rounded-md flex items-center justify-center hover:bg-zinc-200 transition-colors leading-none"
-                onClick={zoomReset}
-                title={t("zoomReset")}
-              >↺</button>
-            </div>
-
-            {/* Actions (undo, PDF, export, import) */}
-            {/* preview-actions → flex items-center gap-2 */}
-            <div className="flex items-center gap-2">
-
-              {/* Bouton Annuler */}
-              {/* print-btn btn-secondary btn-undo → base commune + variante secondaire */}
-              <button
-                className="flex items-center gap-2 px-[18px] py-2 rounded-lg text-sm font-semibold transition-colors duration-200 cursor-pointer bg-slate-100 hover:bg-slate-200 text-slate-700 border border-zinc-200 disabled:opacity-40 disabled:cursor-not-allowed"
-                onClick={undo}
-                disabled={!canUndo}
-                title={`${t("undo")} (Ctrl+Z)`}
-              >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M3 7v6h6"/><path d="M3 13C5 7 11 3 18 5a9 9 0 010 14c-4 1.5-8 1-11-1"/>
-                </svg>
-                {t("undo")}
-              </button>
-
-              {/* Bouton PDF — primaire */}
-              {/* print-btn → flex items-center gap-2 px-[18px] py-2 bg-[--accent] text-white rounded-lg text-sm font-semibold */}
-              <button
-                className="flex items-center gap-2 px-[18px] py-2 bg-blue-600 hover:bg-blue-700 active:scale-[0.97] text-white border-none rounded-lg cursor-pointer text-sm font-semibold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                onClick={printPDF}
-                disabled={hasErrors}
-                title={t("downloadPdf")}
-              >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/>
-                  <rect x="6" y="14" width="12" height="8"/>
-                </svg>
-                {t("downloadPdf")}
-              </button>
-
-              {/* Bouton Export JSON — secondaire */}
-              <button
-                className="flex items-center gap-2 px-[18px] py-2 rounded-lg text-sm font-semibold transition-colors duration-200 cursor-pointer bg-slate-100 hover:bg-slate-200 text-slate-700 border border-zinc-200"
-                onClick={downloadJSON}
-                title={t("export")}
-              >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/>
-                </svg>
-                {t("export")}
-              </button>
-
-              {/* Bouton Import JSON — secondaire */}
-              <button
-                className="flex items-center gap-2 px-[18px] py-2 rounded-lg text-sm font-semibold transition-colors duration-200 cursor-pointer bg-slate-100 hover:bg-slate-200 text-slate-700 border border-zinc-200"
-                onClick={() => importRef.current.click()}
-                title={t("import")}
-              >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
-                </svg>
-                {t("import")}
-              </button>
-              <input ref={importRef} type="file" accept=".json" onChange={importJSON} hidden />
-            </div>
-          </div>
+          <PreviewToolbar
+            t={t}
+            zoom={zoom}
+            onZoomOut={zoomOut}
+            onZoomIn={zoomIn}
+            onZoomReset={zoomReset}
+            onUndo={undo}
+            canUndo={canUndo}
+            onPrintPdf={printPDF}
+            hasErrors={hasErrors}
+            onExportJson={downloadJSON}
+            onImportClick={() => importRef.current.click()}
+            onImportJson={importJSON}
+            importRef={importRef}
+          />
 
           {/* Bandeau avertissement import */}
           {/* import-warning → bg-amber-50 border-b border-amber-200 text-amber-800 text-[13px] px-6 py-2.5 flex items-center gap-2 */}
@@ -389,84 +279,14 @@ export default function App() {
         </main>
       </div>
 
-      {/* ── Navigation mobile (barre en bas) ────────────── */}
-      {/* id="app-mobile-nav" → masqué à l'impression */}
-      <nav id="app-mobile-nav" className="fixed bottom-0 left-0 right-0 h-16 bg-[#1e1e2e] border-t border-white/[0.08] z-[1000] flex md:hidden">
-
-        {/* Onglet Édition */}
-        {/*
-          mob-nav-btn → flex-1 flex flex-col items-center justify-center gap-1
-                        bg-transparent border-none text-white/45 font-medium
-                        text-[11px] cursor-pointer transition-all py-2
-          mob-nav-btn.active → text-[#89b4fa]
-          ::after (indicateur) → géré inline avec un div conditionnel
-        */}
-        <button
-          className={[
-            "flex-1 flex flex-col items-center justify-center gap-1 bg-transparent border-none font-medium text-[11px] cursor-pointer transition-all py-2 relative",
-            mobileTab === "edit" ? "text-[#89b4fa]" : "text-white/45 hover:text-[#89b4fa]",
-          ].join(" ")}
-          onClick={() => setMobileTab("edit")}
-        >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" strokeWidth="2"
-            className={mobileTab === "edit" ? "stroke-[#89b4fa]" : ""}
-          >
-            <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
-            <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
-          </svg>
-          <span>{t("edit")}</span>
-          {mobileTab === "edit" && (
-            <span className="absolute bottom-0 w-8 h-0.5 bg-[#89b4fa] rounded-t-sm" />
-          )}
-        </button>
-
-        {/* Onglet Annuler */}
-        <button
-          className="flex-1 flex flex-col items-center justify-center gap-1 bg-transparent border-none text-white/45 hover:text-[#89b4fa] font-medium text-[11px] cursor-pointer transition-all py-2 disabled:opacity-30 disabled:cursor-not-allowed"
-          onClick={undo}
-          disabled={!canUndo}
-        >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M3 7v6h6"/><path d="M3 13C5 7 11 3 18 5a9 9 0 010 14c-4 1.5-8 1-11-1"/>
-          </svg>
-          <span>{t("undo")}</span>
-        </button>
-
-        {/* Onglet Aperçu */}
-        <button
-          className={[
-            "flex-1 flex flex-col items-center justify-center gap-1 bg-transparent border-none font-medium text-[11px] cursor-pointer transition-all py-2 relative",
-            mobileTab === "preview" ? "text-[#89b4fa]" : "text-white/45 hover:text-[#89b4fa]",
-          ].join(" ")}
-          onClick={() => setMobileTab("preview")}
-        >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" strokeWidth="2"
-            className={mobileTab === "preview" ? "stroke-[#89b4fa]" : ""}
-          >
-            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-            <circle cx="12" cy="12" r="3"/>
-          </svg>
-          <span>{t("preview")}</span>
-          {mobileTab === "preview" && (
-            <span className="absolute bottom-0 w-8 h-0.5 bg-[#89b4fa] rounded-t-sm" />
-          )}
-        </button>
-
-        {/* Bouton PDF */}
-        {/* mob-nav-pdf → bg-blue-600/15 hover:bg-blue-600/30 hover:text-blue-300 */}
-        <button
-          className="flex-1 flex flex-col items-center justify-center gap-1 border-none text-white/45 hover:text-blue-300 font-medium text-[11px] cursor-pointer transition-all py-2 bg-blue-600/15 hover:bg-blue-600/30"
-          onClick={printPDF}
-        >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/>
-            <rect x="6" y="14" width="12" height="8"/>
-          </svg>
-          <span>PDF</span>
-        </button>
-      </nav>
+      <MobileNav
+        t={t}
+        mobileTab={mobileTab}
+        onTabChange={setMobileTab}
+        onUndo={undo}
+        canUndo={canUndo}
+        onPrintPdf={printPDF}
+      />
     </div>
   )
 }

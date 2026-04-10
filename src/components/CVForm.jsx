@@ -14,7 +14,7 @@
 import React, { useState } from "react"
 
 import BulletsEditor from "./cvForm/BulletsEditor"
-import { TEMPLATES, getDensityOptions, getFontOptions, getLangLevels, getSkillLevels } from "./cvForm/constants"
+import { TEMPLATES, getDensityOptions, getFontOptions, getLangLevels, getSkillLevels } from "../constants"
 import DraggableSection from "./cvForm/dnd/DraggableSection"
 import SortableCard from "./cvForm/dnd/SortableCard"
 import Accordion from "./cvForm/ui/Accordion"

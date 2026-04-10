@@ -1,4 +1,12 @@
-// CVPreview.jsx – 9 templates : classic, modern, minimal, executive, creative, timeline, impact, academique, startup
+/**
+ * CVPreview
+ *
+ * Rend l'apercu du CV selon le template selectionne.
+ * Ce fichier contient:
+ * - des sous-composants communs (bullets, certifs, projets)
+ * - les composants de templates
+ * - le routeur final template -> composant
+ */
 import React from "react"
 
 const SKILL_LABELS = ["", "Notions", "Débutant", "Intermédiaire", "Avancé", "Expert"]

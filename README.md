@@ -53,7 +53,7 @@ Callbacks principaux (utilisés dans `CVForm.jsx`) :
 - Modifier un **champ simple** (ex: téléphone) → `CVForm.jsx` + composant `Field` (`src/components/cvForm/ui/Field.jsx`)
 - Modifier une **liste** (expériences, compétences...) → `CVForm.jsx` + DnD (`src/components/cvForm/dnd/*`)
 - Modifier les **descriptions en puces** → `src/components/cvForm/BulletsEditor.jsx`
-- Ajouter un **template** / options → `src/components/cvForm/constants.js`
+- Ajouter un **template** / options → `src/constants.js`
 
 ### Utilisation
 1. Remplissez les champs du formulaire. Les champs **Nom**, **Titre professionnel** et **Email** sont requis.

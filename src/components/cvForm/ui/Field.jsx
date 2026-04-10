@@ -1,3 +1,11 @@
+/**
+ * Field
+ *
+ * Champ de formulaire unifie:
+ * - input texte/email
+ * - textarea
+ * - affichage d'erreur
+ */
 import React from "react"
 
 export default function Field({

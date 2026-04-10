@@ -1,3 +1,9 @@
+/**
+ * RemoveBtn
+ *
+ * Petit bouton "supprimer" (icône croix) reutilisable
+ * dans les cartes/items du formulaire.
+ */
 import React from "react"
 
 export default function RemoveBtn({ onClick, title }) {

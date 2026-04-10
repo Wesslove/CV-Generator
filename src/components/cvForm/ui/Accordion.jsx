@@ -1,3 +1,13 @@
+/**
+ * Accordion
+ *
+ * Section repliable reutilisable pour le formulaire.
+ * Props:
+ * - open: boolean
+ * - onToggle: function
+ * - title: string
+ * - children: contenu JSX
+ */
 import React from "react"
 
 export default function Accordion({ open, onToggle, title, children }) {

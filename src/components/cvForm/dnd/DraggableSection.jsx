@@ -1,3 +1,10 @@
+/**
+ * DraggableSection
+ *
+ * Encapsule le contexte drag-and-drop d'une section:
+ * - calcule oldIndex / newIndex
+ * - notifie le parent via onReorder(section, from, to)
+ */
 import React from "react"
 import { DndContext, PointerSensor, closestCenter, useSensor, useSensors } from "@dnd-kit/core"
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable"
