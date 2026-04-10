@@ -68,6 +68,20 @@ export function cvReducer(state, action) {
       return { ...state, [action.section]: list }
     }
 
+    case "DUPLICATE_ITEM": {
+      const list = [...state[action.section]]
+      const sourceIndex = list.findIndex((item) => item.id === action.id)
+      if (sourceIndex === -1) return state
+      const source = list[sourceIndex]
+      const duplicated = {
+        ...source,
+        id: generateId(),
+        bullets: Array.isArray(source.bullets) ? [...source.bullets] : source.bullets,
+      }
+      list.splice(sourceIndex + 1, 0, duplicated)
+      return { ...state, [action.section]: list }
+    }
+
     // ── Sections personnalisées ────────────────────────────────
     case "ADD_CUSTOM_SECTION":
       return {

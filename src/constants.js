@@ -84,6 +84,13 @@ export const getSkillLevels = (t) => ([
 
 // ── Version de l'app ──────────────────────────────────────────
 export const APP_VERSION = "2.0.0"
+export const CV_SCHEMA_VERSION = 2
+
+export const STYLE_PRESETS = [
+  { id: "pro-navy", labelKey: "presetProNavy", accent: "#1e3a5f", font: "classic", density: "normal" },
+  { id: "modern-blue", labelKey: "presetModernBlue", accent: "#2563eb", font: "modern", density: "normal" },
+  { id: "compact-tech", labelKey: "presetCompactTech", accent: "#0f766e", font: "tech", density: "compact" },
+]
 
 // ── État initial du CV ────────────────────────────────────────
 // accent : #1e3a5f = bleu marine professionnel (défaut)
@@ -114,7 +121,38 @@ export const INITIAL_CV = {
     density:  "normal",
     language: "fr",
     theme:    "light",
+    multiPage: false,
   },
+}
+
+export function normalizeCvData(raw = {}) {
+  return {
+    ...INITIAL_CV,
+    ...raw,
+    settings: {
+      ...INITIAL_CV.settings,
+      ...(raw.settings || {}),
+    },
+  }
+}
+
+export function migrateCvData(payload) {
+  const hasEnvelope = payload && typeof payload === "object" && "data" in payload
+  const schemaVersion = hasEnvelope ? (payload.schemaVersion || 1) : 1
+  let data = hasEnvelope ? payload.data : payload
+  data = normalizeCvData(data)
+
+  if (schemaVersion < 2) {
+    data = {
+      ...data,
+      settings: {
+        ...data.settings,
+        multiPage: data.settings.multiPage ?? false,
+      },
+    }
+  }
+
+  return normalizeCvData(data)
 }
 
 // ── Traductions ───────────────────────────────────────────────
@@ -132,6 +170,9 @@ export const I18N = {
     zoomIn:         "Zoom +",
     zoomOut:        "Zoom −",
     zoomReset:      "Réinitialiser zoom",
+    saveSaving:     "Enregistrement...",
+    saveSaved:      "Sauvegardé",
+    saveError:      "Erreur sauvegarde",
     updateDone:     "Mise à jour effectuée",
     newFeature:     "Nouvelle fonctionnalité disponible",
     importPhotoWarning: "⚠ La photo n'est pas exportée dans le JSON. Rechargez-la après import.",
@@ -141,6 +182,8 @@ export const I18N = {
     formTitle:      "Informations du CV",
     completion:     "Complétion du CV",
     appearance:     "Apparence",
+    stylePresets:   "Presets de style",
+    multiPageMode:  "Mode multi-page (contenus longs)",
     mainColor:      "Couleur principale",
     font:           "Police",
     density:        "Densité du texte",
@@ -155,6 +198,9 @@ export const I18N = {
     fontElegantHint: "Cormorant + Lato",
     fontTech:        "Tech",
     fontTechHint:    "Space Grotesk + DM Sans",
+    presetProNavy:   "Pro Marine",
+    presetModernBlue:"Moderne Bleu",
+    presetCompactTech:"Tech Compact",
 
     // Densité
     compact: "Compact",
@@ -231,6 +277,7 @@ export const I18N = {
 
     // Actions
     add:              "Ajouter",
+    duplicate:        "Dupliquer",
     addSkill:         "Ajouter une compétence",
     addLang:          "Ajouter une langue",
     remove:           "Supprimer",
@@ -290,6 +337,9 @@ export const I18N = {
     zoomIn:         "Zoom in",
     zoomOut:        "Zoom out",
     zoomReset:      "Reset zoom",
+    saveSaving:     "Saving...",
+    saveSaved:      "Saved",
+    saveError:      "Save error",
     updateDone:     "Update applied",
     newFeature:     "New feature available",
     importPhotoWarning: "⚠ Photo is not saved in JSON. Please re-upload after import.",
@@ -297,6 +347,8 @@ export const I18N = {
     formTitle:      "CV Information",
     completion:     "CV Completion",
     appearance:     "Appearance",
+    stylePresets:   "Style presets",
+    multiPageMode:  "Multi-page mode (long content)",
     mainColor:      "Primary color",
     font:           "Font",
     density:        "Text density",
@@ -309,6 +361,9 @@ export const I18N = {
     fontElegantHint:"Cormorant + Lato",
     fontTech:       "Tech",
     fontTechHint:   "Space Grotesk + DM Sans",
+    presetProNavy:   "Pro Navy",
+    presetModernBlue:"Modern Blue",
+    presetCompactTech:"Tech Compact",
     compact: "Compact",
     normal:  "Normal",
     airy:    "Airy",
@@ -375,6 +430,7 @@ export const I18N = {
     phBullet:      "Describe an achievement...",
     phCustomTitle: "Section title",
     add:              "Add",
+    duplicate:        "Duplicate",
     addSkill:         "Add skill",
     addLang:          "Add language",
     remove:           "Remove",

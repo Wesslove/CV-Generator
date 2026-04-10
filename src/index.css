@@ -230,6 +230,19 @@ body {
   transition: background .15s;
 }
 .btn-remove:hover { background: var(--danger); color: white; }
+.btn-dup {
+  padding: 5px 9px;
+  font-size: 11px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: #fff;
+  color: var(--muted);
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 600;
+  transition: all .15s;
+}
+.btn-dup:hover { border-color: var(--accent); color: var(--accent); background: #eff6ff; }
 
 /* Compétences / Langues */
 .skills-list { display: flex; flex-direction: column; gap: 6px; }
@@ -287,6 +300,8 @@ body {
 .font-option-hint  { font-size: 10px; color: var(--muted); margin-top: 2px; }
 
 .density-options { display: flex; gap: 6px; }
+.preset-options { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.preset-btn { min-height: 34px; }
 .density-btn { flex: 1; padding: 7px 4px; border: 1.5px solid var(--border); border-radius: 6px; background: white; font-size: 13px; font-family: inherit; cursor: pointer; transition: all .15s; color: var(--text); }
 .density-btn:hover { border-color: var(--accent); }
 .density-btn.active { border-color: var(--accent); background: #eff6ff; font-weight: 600; color: var(--accent); }
@@ -354,6 +369,16 @@ body {
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
   animation: templateFadeIn 0.25s ease;
+}
+
+.cv-paper.multi-page {
+  min-height: auto;
+  height: auto;
+}
+
+.cv-paper.multi-page section {
+  break-inside: avoid;
+  page-break-inside: avoid;
 }
 
 @keyframes templateFadeIn {
@@ -892,6 +917,7 @@ body.dark .tpl-executive .exec-no-photo { background: #444; color: #cdd6f4; }
   .mobile-template-btns { display: flex; gap: 6px; flex-wrap: wrap; }
   .mobile-template-btns .tpl-btn { background: white; border: 1px solid var(--border); color: var(--text); padding: 5px 12px; font-size: 12px; border-radius: 20px; }
   .mobile-template-btns .tpl-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
+  .preset-options { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 400px) {

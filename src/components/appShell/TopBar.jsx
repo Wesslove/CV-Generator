@@ -17,7 +17,17 @@ export default function TopBar({
   onTemplateChange,
   showUpdateNotice,
   onDismissUpdate,
+  saveStatus = "idle",
 }) {
+  const statusLabel =
+    saveStatus === "saving"
+      ? t("saveSaving")
+      : saveStatus === "saved"
+        ? t("saveSaved")
+        : saveStatus === "error"
+          ? t("saveError")
+          : null
+
   return (
     <header
       id="app-topbar"
@@ -30,6 +40,9 @@ export default function TopBar({
       </div>
 
       <div className="hidden md:flex items-center gap-1.5 ml-auto">
+        {statusLabel && (
+          <span className="text-[12px] text-white/60 mr-2">{statusLabel}</span>
+        )}
         <span className="hidden lg:block text-[#cdd6f4] text-[13px] opacity-60 mr-1">{t("template")}</span>
         {templates.map((tpl) => (
           <button

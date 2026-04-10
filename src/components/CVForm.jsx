@@ -11,7 +11,7 @@
 import React, { useState } from "react"
 
 import BulletsEditor from "./cvForm/BulletsEditor"
-import { TEMPLATES, getDensityOptions, getFontOptions, getLangLevels, getSkillLevels } from "../constants"
+import { TEMPLATES, STYLE_PRESETS, getDensityOptions, getFontOptions, getLangLevels, getSkillLevels } from "../constants"
 import DraggableSection from "./cvForm/dnd/DraggableSection"
 import SortableCard from "./cvForm/dnd/SortableCard"
 import Accordion from "./cvForm/ui/Accordion"
@@ -22,7 +22,7 @@ import RemoveBtn from "./cvForm/ui/RemoveBtn"
 export default function CVForm({
   cvData, errors = {}, completionScore, completionChecks,
   canUndo, onUndo,
-  onChange, onBlur, onPhoto, onAdd, onUpdate, onRemove, onReorder,
+  onChange, onBlur, onPhoto, onAdd, onUpdate, onRemove, onDuplicate, onReorder,
   onTemplateChange, onAddCustomSection, onUpdateCustomSection,
   onRemoveCustomSection, onAddCustomItem, onRemoveCustomItem,
   onUpdateCustomItem, commitToHistory, t, lang = "fr"
@@ -96,6 +96,32 @@ export default function CVForm({
       <div className="settings-block">
         <div className="settings-block-title">{t("appearance")}</div>
         <div className="field-group">
+          <label className="field-label">{t("stylePresets")}</label>
+          <div className="preset-options">
+            {STYLE_PRESETS.map((preset) => (
+              <button
+                key={preset.id}
+                className="density-btn preset-btn"
+                onClick={() =>
+                  onChange({
+                    target: {
+                      name: "settings",
+                      value: {
+                        ...cvData.settings,
+                        accent: preset.accent,
+                        font: preset.font,
+                        density: preset.density,
+                      },
+                    },
+                  })
+                }
+              >
+                {t(preset.labelKey)}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="field-group">
           <label className="field-label">{t("mainColor")}</label>
           <div className="color-picker-row">
             <input type="color" value={cvData.settings.accent}
@@ -135,6 +161,17 @@ export default function CVForm({
             <option value="fr">Français</option>
             <option value="en">English</option>
           </select>
+        </div>
+        <div className="field-group">
+          <label className="field-label">
+            <input
+              type="checkbox"
+              checked={Boolean(cvData.settings.multiPage)}
+              onChange={(e) => updateSettings("multiPage", e.target.checked)}
+              style={{ marginRight: 8 }}
+            />
+            {t("multiPageMode")}
+          </label>
         </div>
       </div>
 
@@ -230,7 +267,10 @@ export default function CVForm({
             <SortableCard key={exp.id} id={exp.id}>
               <div className="card-header">
                 <span className="card-num">#{i+1}</span>
-                <RemoveBtn onClick={() => onRemove("experiences", exp.id)} title={t("remove")} />
+                <div style={{ display: "flex", gap: 6 }}>
+                  <button className="btn-dup" onClick={() => onDuplicate("experiences", exp.id)} title={t("duplicate")}>{t("duplicate")}</button>
+                  <RemoveBtn onClick={() => onRemove("experiences", exp.id)} title={t("remove")} />
+                </div>
               </div>
               <div className="field-row">
                 <Field label={t("company")} value={exp.company} onChange={e => onUpdate("experiences", exp.id, "company", e.target.value)} onBlur={commitToHistory} placeholder={t("phCompany")} />
@@ -299,6 +339,9 @@ export default function CVForm({
           renderItem={(proj, i) => (
             <SortableCard key={proj.id} id={proj.id}>
               <div className="card-header"><span className="card-num">#{i+1}</span><RemoveBtn onClick={() => onRemove("projects", proj.id)} title={t("remove")} /></div>
+              <div className="section-add-row" style={{ marginBottom: 8, marginTop: -2 }}>
+                <button className="btn-dup" onClick={() => onDuplicate("projects", proj.id)}>{t("duplicate")}</button>
+              </div>
               <div className="field-row">
                 <Field label={t("projectName")} value={proj.name} onChange={e => onUpdate("projects", proj.id, "name", e.target.value)} onBlur={commitToHistory} placeholder={t("phProjectName")} />
                 <Field label={t("stack")} value={proj.stack} onChange={e => onUpdate("projects", proj.id, "stack", e.target.value)} onBlur={commitToHistory} placeholder={t("phStack")} />

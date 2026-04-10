@@ -9,7 +9,7 @@
  * - propager les callbacks vers les composants enfants
  */
 
-import React, { useEffect, useState, useRef } from "react"
+import React, { useEffect, useState, useRef, useDeferredValue } from "react"
 import CVForm         from "./components/CVForm"
 import CVPreview      from "./components/CVPreview"
 import PhotoCropModal from "./components/PhotoCropModal"
@@ -22,7 +22,7 @@ import { useUndoReducer }  from "./components/hooks/useUndoReducer"
 import { useCvValidation } from "./components/hooks/useCvValidation"
 import { useCssVars }      from "./components/hooks/useCssVars"
 import { useCompletion }   from "./components/hooks/useCompletion"
-import { INITIAL_CV, TEMPLATES, I18N, APP_VERSION } from "./constants"
+import { INITIAL_CV, TEMPLATES, I18N, APP_VERSION, CV_SCHEMA_VERSION, migrateCvData } from "./constants"
 
 import "./index.css"
 
@@ -40,12 +40,16 @@ export default function App() {
   const [showUpdateNotice, setShowUpdateNotice] = useState(false)
   const [mobileTab, setMobileTab] = useState("edit")
   const [importMsg, setImportMsg] = useState("")
+  const [saveStatus, setSaveStatus] = useState("idle")
   const [cropSrc,   setCropSrc]   = useState(null)
   const [zoom,      setZoom]      = useState(100)
   const importRef = useRef(null)
+  const saveTimerRef = useRef(null)
+  const saveStatusTimerRef = useRef(null)
 
   const lang = cvData.settings.language || "fr"
   const t = React.useMemo(() => makeTranslator(lang), [lang])
+  const deferredCvData = useDeferredValue(cvData)
 
   const { errors, handleBlur, hasErrors } = useCvValidation(cvData, t)
   const { score, checks }                 = useCompletion(cvData, t)
@@ -69,18 +73,37 @@ export default function App() {
       if (!stored) return
       const parsed = JSON.parse(stored)
       if (typeof parsed !== "object" || parsed === null) return
-      dispatch({ type: "LOAD", data: { ...INITIAL_CV, ...parsed } })
+      dispatch({ type: "LOAD", data: migrateCvData(parsed) })
     } catch {
       console.warn("localStorage: données CV invalides, ignorées.")
     }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    const { photo: _photo, ...toSave } = cvData
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave))
-    } catch {
-      console.warn("localStorage: impossible de sauvegarder.")
+    if (saveTimerRef.current) clearTimeout(saveTimerRef.current)
+    setSaveStatus("saving")
+    saveTimerRef.current = setTimeout(() => {
+      const { photo: _photo, ...toSave } = cvData
+      try {
+        localStorage.setItem(
+          STORAGE_KEY,
+          JSON.stringify({
+            schemaVersion: CV_SCHEMA_VERSION,
+            updatedAt: Date.now(),
+            data: toSave,
+          })
+        )
+        setSaveStatus("saved")
+        if (saveStatusTimerRef.current) clearTimeout(saveStatusTimerRef.current)
+        saveStatusTimerRef.current = setTimeout(() => setSaveStatus("idle"), 1400)
+      } catch {
+        console.warn("localStorage: impossible de sauvegarder.")
+        setSaveStatus("error")
+      }
+    }, 450)
+
+    return () => {
+      if (saveTimerRef.current) clearTimeout(saveTimerRef.current)
     }
   }, [cvData])
 
@@ -117,6 +140,7 @@ export default function App() {
   const updateItem  = (section, id, name, value) => dispatch({ type: "UPDATE_ITEM",  section, id, name, value })
   const removeItem  = (section, id)              => dispatch({ type: "REMOVE_ITEM",  section, id })
   const reorderItem = (section, from, to)        => dispatch({ type: "REORDER_ITEM", section, from, to })
+  const duplicateItem = (section, id)            => dispatch({ type: "DUPLICATE_ITEM", section, id })
   const setTemplate = (tpl) => dispatch({ type: "SET_FIELD", name: "template", value: tpl })
 
   const addCustomSection    = ()                    => dispatch({ type: "ADD_CUSTOM_SECTION" })
@@ -128,7 +152,11 @@ export default function App() {
 
   const downloadJSON = () => {
     const { photo: _photo, ...toSave } = cvData
-    const blob = new Blob([JSON.stringify(toSave, null, 2)], { type: "application/json" })
+    const blob = new Blob([JSON.stringify({
+      schemaVersion: CV_SCHEMA_VERSION,
+      updatedAt: Date.now(),
+      data: toSave,
+    }, null, 2)], { type: "application/json" })
     const url  = URL.createObjectURL(blob)
     const a    = document.createElement("a")
     a.href     = url
@@ -145,7 +173,7 @@ export default function App() {
       try {
         const parsed = JSON.parse(ev.target.result)
         if (typeof parsed !== "object" || parsed === null) throw new Error()
-        dispatch({ type: "LOAD", data: { ...INITIAL_CV, ...parsed } })
+        dispatch({ type: "LOAD", data: migrateCvData(parsed) })
         setImportMsg(t("importPhotoWarning"))
         setTimeout(() => setImportMsg(""), 6000)
       } catch {
@@ -194,6 +222,7 @@ export default function App() {
         onTemplateChange={setTemplate}
         showUpdateNotice={showUpdateNotice}
         onDismissUpdate={() => setShowUpdateNotice(false)}
+        saveStatus={saveStatus}
       />
 
       {/* ── Contenu principal ────────────────────────────── */}
@@ -215,6 +244,7 @@ export default function App() {
             onChange={handleChange}     onBlur={handleFieldBlur}
             onPhoto={handlePhoto}       onAdd={addItem}
             onUpdate={updateItem}       onRemove={removeItem}
+            onDuplicate={duplicateItem}
             onReorder={reorderItem}     onTemplateChange={setTemplate}
             onAddCustomSection={addCustomSection}
             onUpdateCustomSection={updateCustomSection}
@@ -268,7 +298,7 @@ export default function App() {
           {/* id="app-preview-scroll" → ciblé par @media print pour annuler le zoom */}
           <div id="app-preview-scroll" className="flex-1 overflow-y-auto flex justify-center pt-8 px-6 pb-[60px] items-start">
             <div id="zoom-wrapper" style={{ transform: `scale(${zoom / 100})`, transformOrigin: "top center", transition: "transform 0.2s ease" }}>
-              <CVPreview cvData={cvData} t={t} />
+              <CVPreview cvData={deferredCvData} t={t} />
             </div>
           </div>
         </main>
