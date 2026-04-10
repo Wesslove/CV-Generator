@@ -1,10 +1,12 @@
 /**
  * BulletsEditor
- *
- * Editeur de lignes a puces:
- * - Enter ajoute une ligne
- * - Backspace supprime une ligne vide
- * - onChange remonte le tableau de lignes au parent
+ * Rôle : edite une liste de lignes a puces pour un item.
+ * Entrées : tableau bullets + callbacks onChange/onCommit + placeholder.
+ * Sorties : tableau bullets mis a jour via onChange.
+ * Responsabilités :
+ * - gerer ajout/suppression des lignes a puces
+ * - gerer les raccourcis clavier (Enter/Backspace)
+ * - notifier le parent au commit (blur)
  */
 import React from "react"
 

@@ -1,11 +1,12 @@
 /**
  * PreviewToolbar
- *
- * Contrôles de la zone d'aperçu:
- * - zoom
- * - undo
- * - export/import JSON
- * - génération PDF
+ * Rôle : rend la barre d'actions de l'apercu (zoom/actions).
+ * Entrées : etat du zoom, flags de validation, callbacks, traducteur.
+ * Sorties : UI de barre d'outils et actions utilisateur propagees au parent.
+ * Responsabilités :
+ * - controler zoom plus/moins/reset
+ * - declencher les actions undo/pdf/export/import
+ * - heberger la liaison ref de l'input import fichier
  */
 import React from "react"
 

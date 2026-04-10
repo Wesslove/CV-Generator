@@ -1,4 +1,13 @@
-// PhotoCropModal.jsx – Recadrage photo par canvas (zoom, pan, rond/carré)
+/**
+ * PhotoCropModal
+ * Rôle : recadre la photo chargee via canvas (zoom + deplacement + forme).
+ * Entrées : URL data de l'image source et callbacks (onConfirm/onClose).
+ * Sorties : URL data de l'image recadree renvoyee au parent.
+ * Responsabilités :
+ * - gerer les interactions de drag/zoom
+ * - dessiner l'apercu de recadrage sur canvas
+ * - exporter l'image recadree avec la forme choisie
+ */
 import React, { useRef, useState, useEffect, useCallback } from "react"
 
 const OUTPUT_SIZE = 400 // px carré de sortie

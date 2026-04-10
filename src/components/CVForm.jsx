@@ -1,15 +1,12 @@
 /**
- * CVForm — corrigé
- *
- * FIX 2 — Tpl-thumb mal rendu en sidebar :
- *   Le bloc .mobile-template-switcher est maintenant conditionnel :
- *   il ne s'affiche que sur mobile (via la classe CSS `mobile-only`
- *   ajoutée dans index.css → display:none sur md+).
- *   Sur desktop/tablette, le switcher est dans la topbar d'App.jsx.
- *
- * FIX 2b — Les miniatures (.tpl-thumb-*) dans le bloc mobile
- *   sont explicitement masquées car elles ne sont utilisées
- *   qu'en mode tablette dans la topbar (media query existante).
+ * CVForm
+ * Rôle : rend et edite toutes les sections du formulaire CV.
+ * Entrées : cvData, erreurs, traducteur i18n et callbacks d'actions depuis App.
+ * Sorties : UI de formulaire controlee et interactions de section (add/update/remove/reorder).
+ * Responsabilités :
+ * - mapper les champs du formulaire vers les callbacks
+ * - orchestrer les accordions de section et cartes DnD
+ * - declencher des checkpoints commitToHistory au blur
  */
 import React, { useState } from "react"
 

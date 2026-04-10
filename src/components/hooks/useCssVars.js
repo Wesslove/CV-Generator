@@ -1,8 +1,13 @@
-// ─────────────────────────────────────────────────────────────
-// hooks/useCssVars.js
-// Applique les préférences visuelles (couleur, police, densité,
-// thème) comme variables CSS sur :root et classes sur <body>.
-// ─────────────────────────────────────────────────────────────
+/**
+ * useCssVars
+ * Rôle : projette les reglages sur les variables CSS et classes du body.
+ * Entrées : objet settings (accent, police, densite, darkMode).
+ * Sorties : effets de bord sur styles/classes du document.
+ * Responsabilités :
+ * - calculer les valeurs de police et densite
+ * - definir les variables CSS racine
+ * - basculer la classe dark mode sur body
+ */
 
 import { useEffect } from "react"
 import { FONT_OPTIONS, DENSITY_OPTIONS } from "../../constants"

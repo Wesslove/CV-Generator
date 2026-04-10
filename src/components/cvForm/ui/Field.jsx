@@ -1,10 +1,12 @@
 /**
  * Field
- *
- * Champ de formulaire unifie:
- * - input texte/email
- * - textarea
- * - affichage d'erreur
+ * Rôle : composant de champ unifie (input/textarea).
+ * Entrées : label, valeur, handlers, mode et erreur de validation.
+ * Sorties : UI de champ controlee.
+ * Responsabilités :
+ * - rendre la variante input ou textarea
+ * - appliquer l'etat visuel d'erreur
+ * - propager les evenements change/blur au parent
  */
 import React from "react"
 

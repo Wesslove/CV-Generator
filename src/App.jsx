@@ -1,18 +1,13 @@
-// ─────────────────────────────────────────────────────────────
-// App.jsx — migré Tailwind CDN
-// Classes CSS custom supprimées : app-layout, top-bar, top-bar-brand,
-// brand-name, template-switcher, switcher-label, tpl-btn, main-content,
-// form-sidebar, mobile-hidden, preview-area, preview-controls,
-// preview-label, zoom-controls, zoom-btn, zoom-pct, print-btn,
-// btn-secondary, btn-undo, preview-actions, preview-scroll,
-// import-warning, mobile-bottom-nav, mob-nav-btn, mob-nav-pdf
-//
-// Conservées dans index.css (dynamiques ou print) :
-//   .tpl-btn.active         → dépend de --accent via useCssVars
-//   .mobile-hidden          → peut rester ou être géré inline (voir ci-dessous)
-//   @media print            → intouché
-//   update-notice           → petit composant isolé, gardé tel quel
-// ─────────────────────────────────────────────────────────────
+/**
+ * App
+ * Rôle : compose l'ecran principal du generateur de CV et orchestre les etats/actions.
+ * Entrées : aucune (composant conteneur racine).
+ * Sorties : rend le formulaire, l'apercu, la barre haute et la navigation mobile.
+ * Responsabilités :
+ * - gerer l'etat global UI (zoom, onglets, notification, modal de recadrage)
+ * - connecter le reducer et les hooks (validation, completion, variables CSS, undo)
+ * - propager les callbacks vers les composants enfants
+ */
 
 import React, { useEffect, useState, useRef } from "react"
 import CVForm         from "./components/CVForm"

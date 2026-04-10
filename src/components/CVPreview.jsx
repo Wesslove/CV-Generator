@@ -1,11 +1,12 @@
 /**
  * CVPreview
- *
- * Rend l'apercu du CV selon le template selectionne.
- * Ce fichier contient:
- * - des sous-composants communs (bullets, certifs, projets)
- * - les composants de templates
- * - le routeur final template -> composant
+ * Rôle : rend la sortie CV selon le template actif.
+ * Entrées : cvData + traducteur optionnel `t`.
+ * Sorties : arbre de composants d'apercu imprimable.
+ * Responsabilités :
+ * - heberger les sous-composants d'apercu partages
+ * - definir tous les renderers de template
+ * - select template component from `cvData.template`
  */
 import React from "react"
 

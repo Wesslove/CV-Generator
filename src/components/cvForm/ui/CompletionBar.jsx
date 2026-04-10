@@ -1,8 +1,12 @@
 /**
  * CompletionBar
- *
- * Affiche le score de completion (0-100) et
- * une liste courte d'actions manquantes.
+ * Rôle : affiche le score de completion et les indices manquants.
+ * Entrées : score, tableau checks et label.
+ * Sorties : barre de progression et badges d'indices.
+ * Responsabilités :
+ * - calculer les seuils de couleur du score
+ * - rendre le remplissage et le pourcentage
+ * - afficher les principaux indices manquants
  */
 import React from "react"
 

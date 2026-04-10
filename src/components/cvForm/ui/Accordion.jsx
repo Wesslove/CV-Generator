@@ -1,12 +1,12 @@
 /**
  * Accordion
- *
- * Section repliable reutilisable pour le formulaire.
- * Props:
- * - open: boolean
- * - onToggle: function
- * - title: string
- * - children: contenu JSX
+ * Rôle : conteneur de section repliable reutilisable.
+ * Entrées : flag open, callback toggle, titre et children.
+ * Sorties : UI de section ouverte/repliee.
+ * Responsabilités :
+ * - rendre l'en-tete de section/fleche
+ * - basculer la visibilite du corps de section
+ * - heberger le contenu formulaire imbrique
  */
 import React from "react"
 

@@ -1,8 +1,11 @@
 /**
  * RemoveBtn
- *
- * Petit bouton "supprimer" (icône croix) reutilisable
- * dans les cartes/items du formulaire.
+ * Rôle : bouton icone de suppression reutilisable.
+ * Entrées : callback de clic et tooltip/titre.
+ * Sorties : evenement de clic bouton vers le parent.
+ * Responsabilités :
+ * - fournir une affordance de suppression coherente
+ * - centraliser le style de l'icone de suppression
  */
 import React from "react"
 

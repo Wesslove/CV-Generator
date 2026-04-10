@@ -1,9 +1,12 @@
 /**
  * DraggableSection
- *
- * Encapsule le contexte drag-and-drop d'une section:
- * - calcule oldIndex / newIndex
- * - notifie le parent via onReorder(section, from, to)
+ * Rôle : encapsule une section avec le comportement sortable dnd-kit.
+ * Entrées : cle de section, liste items, callback reorder, renderer item.
+ * Sorties : evenements de drag traduits vers onReorder(from,to).
+ * Responsabilités :
+ * - configurer les capteurs et la strategie de collision
+ * - mapper les ids draggables vers les indices
+ * - appeler le handler de reorder parent en securite
  */
 import React from "react"
 import { DndContext, PointerSensor, closestCenter, useSensor, useSensors } from "@dnd-kit/core"

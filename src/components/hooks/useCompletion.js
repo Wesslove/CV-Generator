@@ -1,9 +1,13 @@
-// ─────────────────────────────────────────────────────────────
-// hooks/useCompletion.js
-// Calcule le score de complétion du CV (0–100%).
-// Séparé pour être facile à modifier : ajouter/supprimer
-// un critère ne touche qu'à ce fichier.
-// ─────────────────────────────────────────────────────────────
+/**
+ * useCompletion
+ * Rôle : calcule le score de completion CV depuis les criteres de validation.
+ * Entrées : cvData + fonction traducteur.
+ * Sorties : resultat memoise { score, checks }.
+ * Responsabilités :
+ * - definir la checklist de completion
+ * - evaluer les criteres faits/manquants
+ * - deriver le pourcentage depuis les checks
+ */
 
 import { useMemo } from "react"
 

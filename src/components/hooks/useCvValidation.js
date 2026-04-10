@@ -1,8 +1,13 @@
-// ─────────────────────────────────────────────────────────────
-// hooks/useCvValidation.js
-// Validation des champs obligatoires du CV.
-// Séparé de App.jsx pour être facile à modifier ou étendre.
-// ─────────────────────────────────────────────────────────────
+/**
+ * useCvValidation
+ * Rôle : valide les champs CV obligatoires et retourne les erreurs.
+ * Entrées : cvData + fonction traducteur.
+ * Sorties : { errors, touched, handleBlur, hasErrors }.
+ * Responsabilités :
+ * - valider les regles obligatoires nom/titre/email
+ * - suivre les champs touches
+ * - exposer le handler blur et le flag d'erreur global
+ */
 
 import { useMemo, useState } from "react"
 

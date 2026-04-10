@@ -1,12 +1,13 @@
-// ─────────────────────────────────────────────────────────────
-// hooks/useUndoReducer.js
-// Hook personnalisé qui ajoute un système Annuler (Ctrl+Z)
-// à n'importe quel reducer React.
-//
-// Utilisation :
-//   const [state, dispatch, undo, canUndo, commitToHistory] =
-//     useUndoReducer(monReducer, valeurInitiale)
-// ─────────────────────────────────────────────────────────────
+/**
+ * useUndoReducer
+ * Rôle : ajoute des capacites d'historique undo par-dessus un reducer.
+ * Entrées : fonction reducer + etat initial.
+ * Sorties : [state, dispatch, undo, canUndo, commitToHistory].
+ * Responsabilités :
+ * - stocker l'etat reducer et la pile d'historique
+ * - exposer l'action undo and availability flag
+ * - creer des checkpoints explicites avec commitToHistory
+ */
 
 import { useState, useCallback } from "react"
 

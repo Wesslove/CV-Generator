@@ -1,6 +1,13 @@
-// ─────────────────────────────────────────────────────────────
-// constants.js – données statiques de l'application
-// ─────────────────────────────────────────────────────────────
+/**
+ * constants
+ * Rôle : centralise la configuration statique, les libelles i18n et les donnees initiales du CV.
+ * Entrées : fonction de traduction `t` pour les getters utilitaires.
+ * Sorties : constantes exportees et fonctions utilitaires.
+ * Responsabilités :
+ * - exposer templates/options/niveaux
+ * - fournir les donnees par defaut et la version
+ * - stocker les dictionnaires de traduction
+ */
 
 // ── Templates ─────────────────────────────────────────────────
 // Format objet pour que App.jsx puisse utiliser tpl.id et tpl.label
@@ -203,7 +210,7 @@ export const I18N = {
     phMaritalStatus: "Célibataire",
     phSummary:     "Décrivez votre profil en 2-3 phrases...",
     phCompany:     "Acme Corp",
-    phRole:        "Développeur Frontend",
+    phRole:         "Développeur Frontend",
     phPeriod:      "Jan 2022 – Présent",
     phSchool:      "Université Paris-Saclay",
     phDegree:      "Master Informatique",
@@ -349,7 +356,7 @@ export const I18N = {
     phMaritalStatus: "Single",
     phSummary:     "Describe your profile in 2-3 sentences...",
     phCompany:     "Acme Corp",
-    phRole:        "Frontend Developer",
+    phRole:         "Frontend Developer",
     phPeriod:      "Jan 2022 – Present",
     phSchool:      "MIT",
     phDegree:      "MSc Computer Science",

@@ -1,9 +1,13 @@
-// ─────────────────────────────────────────────────────────────
-// reducer.js
-// Toute la logique de modification de l'état du CV.
-// Un reducer est une fonction PURE : mêmes entrées → même sortie.
-// Aucun appel API, aucun side-effect ici.
-// ─────────────────────────────────────────────────────────────
+/**
+ * reducer
+ * Rôle : transitions d'etat pures pour toutes les mutations du CV.
+ * Entrées : etat courant + charge utile de l'action.
+ * Sorties : nouvel etat immutable.
+ * Responsabilités :
+ * - gerer le CRUD des sections/items dynamiques
+ * - mettre a jour les champs simples et sections personnalisees
+ * - garder toutes les regles de mutation dans une fonction pure
+ */
 
 /**
  * Génère un ID unique basé sur l'heure + un nombre aléatoire.

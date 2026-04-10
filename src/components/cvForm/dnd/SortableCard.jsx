@@ -1,8 +1,12 @@
 /**
  * SortableCard
- *
- * Carte draggable individuelle avec "drag handle".
- * Utilisee dans les sections dynamiques (experiences, skills, etc.).
+ * Rôle : rend une carte sortable avec poignee de drag.
+ * Entrées : id d'item sortable + contenu children.
+ * Sorties : UI de carte draggable avec styles de transformation.
+ * Responsabilités :
+ * - connecter les bindings useSortable
+ * - rendre la poignee avec listeners/attributes
+ * - appliquer l'animation de drag et l'etat d'opacite
  */
 import React from "react"
 import { useSortable } from "@dnd-kit/sortable"
