@@ -377,8 +377,30 @@ body {
 }
 
 .cv-paper.multi-page section {
+  break-inside: auto;
+  page-break-inside: auto;
+}
+
+/* Multi-page: petits blocs non coupables, gros blocs autorisés */
+.cv-paper.multi-page .classic-skill-item,
+.cv-paper.multi-page .cert-item,
+.cv-paper.multi-page .hobbies-list li {
   break-inside: avoid;
   page-break-inside: avoid;
+}
+
+.cv-paper.multi-page .timeline-item,
+.cv-paper.multi-page .modern-entry,
+.cv-paper.multi-page .exec-entry,
+.cv-paper.multi-page .creative-entry,
+.cv-paper.multi-page .impact-entry,
+.cv-paper.multi-page .tl2-node,
+.cv-paper.multi-page .min-entry,
+.cv-paper.multi-page .startup-card,
+.cv-paper.multi-page .acad-entry,
+.cv-paper.multi-page .proj-item {
+  break-inside: auto;
+  page-break-inside: auto;
 }
 
 @keyframes templateFadeIn {
@@ -422,6 +444,26 @@ body {
 .proj-stack { font-size: 11px; background: var(--accent); color: white; padding: 2px 8px; border-radius: 10px; white-space: nowrap; flex-shrink: 0; }
 .proj-desc  { font-size: 12.5px; color: #555; line-height: 1.5; }
 .proj-url   { font-size: 11px; color: var(--accent); word-break: break-all; display: block; margin-top: 3px; }
+
+/* Anti-débordement horizontal sur contenus longs */
+.classic-contacts span,
+.modern-contacts span,
+.impact-contact-item,
+.startup-contact,
+.tl2-contact-item,
+.acad-contact,
+.entry-desc,
+.exec-entry-desc,
+.creative-entry-desc,
+.impact-entry-desc,
+.tl2-node-desc,
+.proj-desc,
+.proj-url,
+.startup-url,
+.cert-issuer {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
 
 /* Spinner PDF */
 @keyframes spin { to { transform: rotate(360deg); } }
@@ -948,6 +990,42 @@ body.dark .tpl-executive .exec-no-photo { background: #444; color: #cdd6f4; }
     padding: 0 !important;
     height: auto !important;
     overflow: visible !important;
+  }
+
+  /* Variante compacte impression (réduction douce des marges/espaces) */
+  .cv-paper {
+    font-size: calc(var(--cv-base-size) - 1px) !important;
+    line-height: 1.35 !important;
+  }
+  .classic-header,
+  .modern-header,
+  .exec-header,
+  .creative-hero,
+  .impact-header,
+  .tl2-header,
+  .startup-header {
+    padding-top: 24px !important;
+    padding-bottom: 18px !important;
+  }
+  .classic-main,
+  .modern-body,
+  .exec-content,
+  .creative-main,
+  .impact-main,
+  .startup-main,
+  .acad-body {
+    padding-top: 18px !important;
+    padding-bottom: 18px !important;
+  }
+  .classic-main section,
+  .modern-section,
+  .exec-entry,
+  .creative-entry,
+  .impact-entry,
+  .min-section,
+  .startup-section,
+  .acad-section {
+    margin-bottom: 12px !important;
   }
 
   /* Masquer tout l'UI sauf le CV */
