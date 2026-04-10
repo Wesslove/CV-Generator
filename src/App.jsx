@@ -81,6 +81,7 @@ export default function App() {
 
   useEffect(() => {
     if (saveTimerRef.current) clearTimeout(saveTimerRef.current)
+    if (saveStatusTimerRef.current) clearTimeout(saveStatusTimerRef.current)
     setSaveStatus("saving")
     saveTimerRef.current = setTimeout(() => {
       const { photo: _photo, ...toSave } = cvData
@@ -104,6 +105,7 @@ export default function App() {
 
     return () => {
       if (saveTimerRef.current) clearTimeout(saveTimerRef.current)
+      if (saveStatusTimerRef.current) clearTimeout(saveStatusTimerRef.current)
     }
   }, [cvData])
 
@@ -223,6 +225,7 @@ export default function App() {
         showUpdateNotice={showUpdateNotice}
         onDismissUpdate={() => setShowUpdateNotice(false)}
         saveStatus={saveStatus}
+        printDenseEnabled={Boolean(cvData.settings.printDense)}
       />
 
       {/* ── Contenu principal ────────────────────────────── */}

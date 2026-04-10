@@ -84,7 +84,7 @@ export const getSkillLevels = (t) => ([
 
 // ── Version de l'app ──────────────────────────────────────────
 export const APP_VERSION = "2.0.0"
-export const CV_SCHEMA_VERSION = 2
+export const CV_SCHEMA_VERSION = 4
 
 export const STYLE_PRESETS = [
   { id: "pro-navy", labelKey: "presetProNavy", accent: "#1e3a5f", font: "classic", density: "normal" },
@@ -119,6 +119,8 @@ export const INITIAL_CV = {
     accent:   "#1e3a5f",
     font:     "classic",
     density:  "normal",
+    templateVariant: "premium",
+    printDense: false,
     language: "fr",
     theme:    "light",
     multiPage: false,
@@ -152,6 +154,26 @@ export function migrateCvData(payload) {
     }
   }
 
+  if (schemaVersion < 3) {
+    data = {
+      ...data,
+      settings: {
+        ...data.settings,
+        templateVariant: data.settings.templateVariant ?? "premium",
+      },
+    }
+  }
+
+  if (schemaVersion < 4) {
+    data = {
+      ...data,
+      settings: {
+        ...data.settings,
+        printDense: data.settings.printDense ?? false,
+      },
+    }
+  }
+
   return normalizeCvData(data)
 }
 
@@ -173,6 +195,7 @@ export const I18N = {
     saveSaving:     "Enregistrement...",
     saveSaved:      "Sauvegardé",
     saveError:      "Erreur sauvegarde",
+    printDenseOn:   "PDF dense activé",
     updateDone:     "Mise à jour effectuée",
     newFeature:     "Nouvelle fonctionnalité disponible",
     importPhotoWarning: "⚠ La photo n'est pas exportée dans le JSON. Rechargez-la après import.",
@@ -183,7 +206,12 @@ export const I18N = {
     completion:     "Complétion du CV",
     appearance:     "Apparence",
     stylePresets:   "Presets de style",
+    templateVariant: "Variante visuelle",
+    variantMinimal:  "Minimal",
+    variantPremium:  "Premium",
+    variantColorful: "Coloré",
     multiPageMode:  "Mode multi-page (contenus longs)",
+    printDenseMode: "Mode impression dense (tenir sur moins de pages)",
     mainColor:      "Couleur principale",
     font:           "Police",
     density:        "Densité du texte",
@@ -340,6 +368,7 @@ export const I18N = {
     saveSaving:     "Saving...",
     saveSaved:      "Saved",
     saveError:      "Save error",
+    printDenseOn:   "Dense PDF enabled",
     updateDone:     "Update applied",
     newFeature:     "New feature available",
     importPhotoWarning: "⚠ Photo is not saved in JSON. Please re-upload after import.",
@@ -348,7 +377,12 @@ export const I18N = {
     completion:     "CV Completion",
     appearance:     "Appearance",
     stylePresets:   "Style presets",
+    templateVariant: "Visual variant",
+    variantMinimal:  "Minimal",
+    variantPremium:  "Premium",
+    variantColorful: "Colorful",
     multiPageMode:  "Multi-page mode (long content)",
+    printDenseMode: "Dense print mode (fit on fewer pages)",
     mainColor:      "Primary color",
     font:           "Font",
     density:        "Text density",

@@ -1303,7 +1303,7 @@ function CVPreview({ cvData, t: tProp, className = "" }) {
   return (
     <div
       id="cv-preview"
-      className={`cv-paper template-${cvData.template} ${cvData.settings?.multiPage ? "multi-page" : ""} ${className}`.trim()}
+      className={`cv-paper template-${cvData.template} variant-${cvData.settings?.templateVariant || "premium"} ${cvData.settings?.multiPage ? "multi-page" : ""} ${cvData.settings?.printDense ? "print-dense" : ""} ${className}`.trim()}
     >
       {templates[cvData.template] || templates.classic}
     </div>

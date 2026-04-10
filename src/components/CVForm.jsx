@@ -122,6 +122,29 @@ export default function CVForm({
           </div>
         </div>
         <div className="field-group">
+          <label className="field-label">{t("templateVariant")}</label>
+          <div className="density-options">
+            <button
+              className={`density-btn ${((cvData.settings.templateVariant || "premium") === "minimal") ? "active" : ""}`}
+              onClick={() => updateSettings("templateVariant", "minimal")}
+            >
+              {t("variantMinimal")}
+            </button>
+            <button
+              className={`density-btn ${((cvData.settings.templateVariant || "premium") === "premium") ? "active" : ""}`}
+              onClick={() => updateSettings("templateVariant", "premium")}
+            >
+              {t("variantPremium")}
+            </button>
+            <button
+              className={`density-btn ${((cvData.settings.templateVariant || "premium") === "colorful") ? "active" : ""}`}
+              onClick={() => updateSettings("templateVariant", "colorful")}
+            >
+              {t("variantColorful")}
+            </button>
+          </div>
+        </div>
+        <div className="field-group">
           <label className="field-label">{t("mainColor")}</label>
           <div className="color-picker-row">
             <input type="color" value={cvData.settings.accent}
@@ -171,6 +194,17 @@ export default function CVForm({
               style={{ marginRight: 8 }}
             />
             {t("multiPageMode")}
+          </label>
+        </div>
+        <div className="field-group">
+          <label className="field-label">
+            <input
+              type="checkbox"
+              checked={Boolean(cvData.settings.printDense)}
+              onChange={(e) => updateSettings("printDense", e.target.checked)}
+              style={{ marginRight: 8 }}
+            />
+            {t("printDenseMode")}
           </label>
         </div>
       </div>

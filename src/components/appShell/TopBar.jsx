@@ -18,6 +18,7 @@ export default function TopBar({
   showUpdateNotice,
   onDismissUpdate,
   saveStatus = "idle",
+  printDenseEnabled = false,
 }) {
   const statusLabel =
     saveStatus === "saving"
@@ -42,6 +43,11 @@ export default function TopBar({
       <div className="hidden md:flex items-center gap-1.5 ml-auto">
         {statusLabel && (
           <span className="text-[12px] text-white/60 mr-2">{statusLabel}</span>
+        )}
+        {printDenseEnabled && (
+          <span className="text-[11px] text-emerald-200 bg-emerald-500/15 border border-emerald-400/40 rounded-full px-2 py-0.5 mr-2">
+            {t("printDenseOn")}
+          </span>
         )}
         <span className="hidden lg:block text-[#cdd6f4] text-[13px] opacity-60 mr-1">{t("template")}</span>
         {templates.map((tpl) => (
