@@ -22,11 +22,13 @@ import { useUndoReducer }  from "./components/hooks/useUndoReducer"
 import { useCvValidation } from "./components/hooks/useCvValidation"
 import { useCssVars }      from "./components/hooks/useCssVars"
 import { useCompletion }   from "./components/hooks/useCompletion"
-import { INITIAL_CV, TEMPLATES, I18N, APP_VERSION, CV_SCHEMA_VERSION, migrateCvData } from "./constants"
+import { INITIAL_CV, getTemplates, I18N, APP_VERSION, CV_SCHEMA_VERSION, migrateCvData } from "./constants"
+import { exportPdf } from "./utils/exportPdf"
 
 import "./index.css"
 
 const STORAGE_KEY = "cvData"
+const MAX_PHOTO_SIZE = 2 * 1024 * 1024
 
 function makeTranslator(lang) {
   return (key) => I18N[lang]?.[key] ?? I18N.fr[key] ?? key
@@ -34,21 +36,24 @@ function makeTranslator(lang) {
 
 export default function App() {
 
-  const [cvData, dispatch, undo, canUndo, commitToHistory] =
+  const [cvData, dispatch, undo, redo, canUndo, canRedo, commitToHistory, resetHistory] =
     useUndoReducer(cvReducer, INITIAL_CV)
 
   const [showUpdateNotice, setShowUpdateNotice] = useState(false)
   const [mobileTab, setMobileTab] = useState("edit")
   const [importMsg, setImportMsg] = useState("")
   const [saveStatus, setSaveStatus] = useState("idle")
+  const [pdfExporting, setPdfExporting] = useState(false)
   const [cropSrc,   setCropSrc]   = useState(null)
   const [zoom,      setZoom]      = useState(100)
   const importRef = useRef(null)
+  const previewRef = useRef(null)
   const saveTimerRef = useRef(null)
   const saveStatusTimerRef = useRef(null)
 
   const lang = cvData.settings.language || "fr"
   const t = React.useMemo(() => makeTranslator(lang), [lang])
+  const templates = React.useMemo(() => getTemplates(t), [t])
   const deferredCvData = useDeferredValue(cvData)
 
   const { errors, handleBlur, hasErrors } = useCvValidation(cvData, t)
@@ -111,14 +116,21 @@ export default function App() {
 
   useEffect(() => {
     const onKeyDown = (e) => {
-      if ((e.ctrlKey || e.metaKey) && e.key === "z" && !e.shiftKey) {
+      if (!(e.ctrlKey || e.metaKey)) return
+      if (e.key === "z" && !e.shiftKey) {
         e.preventDefault()
         undo()
+      } else if (e.key === "z" && e.shiftKey) {
+        e.preventDefault()
+        redo()
+      } else if (e.key === "y") {
+        e.preventDefault()
+        redo()
       }
     }
     window.addEventListener("keydown", onKeyDown)
     return () => window.removeEventListener("keydown", onKeyDown)
-  }, [undo])
+  }, [undo, redo])
 
   // ── Handlers ─────────────────────────────────────────────
   const handleChange    = (e) => dispatch({ type: "SET_FIELD", name: e.target.name, value: e.target.value })
@@ -127,6 +139,11 @@ export default function App() {
   const handlePhoto = (e) => {
     const file = e.target.files[0]
     if (!file) return
+    if (file.size > MAX_PHOTO_SIZE) {
+      alert(t("photoTooLarge"))
+      e.target.value = ""
+      return
+    }
     const reader = new FileReader()
     reader.onload = (ev) => setCropSrc(ev.target.result)
     reader.readAsDataURL(file)
@@ -195,6 +212,32 @@ export default function App() {
     }, 200)
   }
 
+  const exportNativePdf = async () => {
+    const element = document.getElementById("cv-preview")
+    if (!element) return
+    const savedZoom = zoom
+    setPdfExporting(true)
+    setZoom(100)
+    try {
+      await new Promise((r) => setTimeout(r, 200))
+      const slug = (cvData.name.trim() || "cv").toLowerCase().replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "")
+      await exportPdf(element, `${slug || "cv"}.pdf`)
+    } catch (err) {
+      console.error("PDF export failed", err)
+      alert(t("importError"))
+    } finally {
+      setZoom(savedZoom)
+      setPdfExporting(false)
+    }
+  }
+
+  const resetCv = () => {
+    if (!window.confirm(t("resetConfirm"))) return
+    try { localStorage.removeItem(STORAGE_KEY) } catch { /* ignore */ }
+    resetHistory(INITIAL_CV)
+    setImportMsg("")
+  }
+
   const zoomIn    = () => setZoom((z) => Math.min(150, z + 10))
   const zoomOut   = () => setZoom((z) => Math.max(50,  z - 10))
   const zoomReset = () => setZoom(100)
@@ -219,7 +262,7 @@ export default function App() {
 
       <TopBar
         t={t}
-        templates={TEMPLATES}
+        templates={templates}
         currentTemplate={cvData.template}
         onTemplateChange={setTemplate}
         showUpdateNotice={showUpdateNotice}
@@ -243,7 +286,11 @@ export default function App() {
           <CVForm
             cvData={cvData}             errors={errors}
             completionScore={score}     completionChecks={checks}
-            canUndo={canUndo}           onUndo={undo}
+            canUndo={canUndo}
+            canRedo={canRedo}
+            onUndo={undo}
+            onRedo={redo}
+            onReset={resetCv}
             onChange={handleChange}     onBlur={handleFieldBlur}
             onPhoto={handlePhoto}       onAdd={addItem}
             onUpdate={updateItem}       onRemove={removeItem}
@@ -280,8 +327,12 @@ export default function App() {
             onZoomIn={zoomIn}
             onZoomReset={zoomReset}
             onUndo={undo}
+            onRedo={redo}
             canUndo={canUndo}
+            canRedo={canRedo}
             onPrintPdf={printPDF}
+            onExportNativePdf={exportNativePdf}
+            pdfExporting={pdfExporting}
             hasErrors={hasErrors}
             onExportJson={downloadJSON}
             onImportClick={() => importRef.current.click()}
@@ -289,18 +340,14 @@ export default function App() {
             importRef={importRef}
           />
 
-          {/* Bandeau avertissement import */}
-          {/* import-warning → bg-amber-50 border-b border-amber-200 text-amber-800 text-[13px] px-6 py-2.5 flex items-center gap-2 */}
           {importMsg && (
-            <div className="bg-amber-50 border-b border-amber-200 text-amber-800 text-[13px] px-6 py-2.5 flex items-center gap-2">
+            <div className="import-warning">
               {importMsg}
             </div>
           )}
 
-          {/* Zone de défilement du CV avec zoom */}
-          {/* id="app-preview-scroll" → ciblé par @media print pour annuler le zoom */}
-          <div id="app-preview-scroll" className="flex-1 overflow-y-auto flex justify-center pt-8 px-6 pb-[60px] items-start">
-            <div id="zoom-wrapper" style={{ transform: `scale(${zoom / 100})`, transformOrigin: "top center", transition: "transform 0.2s ease" }}>
+          <div id="app-preview-scroll">
+            <div id="zoom-wrapper" ref={previewRef} style={{ transform: `scale(${zoom / 100})`, transformOrigin: "top center", transition: "transform 0.2s ease" }}>
               <CVPreview cvData={deferredCvData} t={t} />
             </div>
           </div>
