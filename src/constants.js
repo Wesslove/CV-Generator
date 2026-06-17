@@ -12,16 +12,19 @@
 // ── Templates ─────────────────────────────────────────────────
 // Format objet pour que App.jsx puisse utiliser tpl.id et tpl.label
 export const TEMPLATES = [
-  { id: "classic",    label: "Classic" },
-  { id: "modern",     label: "Modern" },
-  { id: "minimal",    label: "Minimal" },
-  { id: "executive",  label: "Executive" },
-  { id: "creative",   label: "Creative" },
-  { id: "timeline",   label: "Timeline" },
-  { id: "impact",     label: "Impact" },
-  { id: "academique", label: "Académique" },
-  { id: "startup",    label: "Startup" },
+  { id: "classic",    labelKey: "tplClassic" },
+  { id: "modern",     labelKey: "tplModern" },
+  { id: "minimal",    labelKey: "tplMinimal" },
+  { id: "executive",  labelKey: "tplExecutive" },
+  { id: "creative",   labelKey: "tplCreative" },
+  { id: "timeline",   labelKey: "tplTimeline" },
+  { id: "impact",     labelKey: "tplImpact" },
+  { id: "academique", labelKey: "tplAcademique" },
+  { id: "startup",    labelKey: "tplStartup" },
 ]
+
+export const getTemplates = (t) =>
+  TEMPLATES.map((tpl) => ({ ...tpl, label: t(tpl.labelKey) }))
 
 // ── Options de polices ────────────────────────────────────────
 export const FONT_OPTIONS = [
@@ -83,7 +86,7 @@ export const getSkillLevels = (t) => ([
 ])
 
 // ── Version de l'app ──────────────────────────────────────────
-export const APP_VERSION = "2.0.0"
+export const APP_VERSION = "2.1.0"
 export const CV_SCHEMA_VERSION = 4
 
 export const STYLE_PRESETS = [
@@ -185,7 +188,13 @@ export const I18N = {
     edit:           "Éditer",
     preview:        "Aperçu",
     undo:           "Annuler",
+    redo:           "Rétablir",
+    resetCv:        "Nouveau CV",
+    resetConfirm:   "Réinitialiser toutes les données du CV ? Cette action est irréversible.",
     downloadPdf:    "Télécharger PDF",
+    downloadPdfNative: "PDF direct",
+    pdfExporting:   "Génération du PDF...",
+    photoTooLarge:  "Image trop volumineuse (max 2 Mo).",
     export:         "Exporter",
     import:         "Importer",
     livePreview:    "Aperçu en direct",
@@ -216,6 +225,9 @@ export const I18N = {
     font:           "Police",
     density:        "Densité du texte",
     interfaceLang:  "Langue de l'interface",
+    themeMode:      "Thème de l'aperçu",
+    themeLight:     "Clair",
+    themeDark:      "Sombre",
 
     // Polices
     fontClassic:     "Classique",
@@ -325,6 +337,18 @@ export const I18N = {
     errName:  "Le nom est requis.",
     errTitle: "Le titre est requis.",
     errEmail: "Email invalide.",
+    errEmailRequired: "L'email est requis.",
+
+    // Noms des templates
+    tplClassic:    "Classique",
+    tplModern:     "Moderne",
+    tplMinimal:    "Minimal",
+    tplExecutive:  "Executive",
+    tplCreative:   "Créatif",
+    tplTimeline:   "Timeline",
+    tplImpact:     "Impact",
+    tplAcademique: "Académique",
+    tplStartup:    "Startup",
 
     // Templates CV (labels internes)
     tplProfile:  "Profil",
@@ -358,7 +382,13 @@ export const I18N = {
     edit:           "Edit",
     preview:        "Preview",
     undo:           "Undo",
+    redo:           "Redo",
+    resetCv:        "New CV",
+    resetConfirm:   "Reset all CV data? This cannot be undone.",
     downloadPdf:    "Download PDF",
+    downloadPdfNative: "Direct PDF",
+    pdfExporting:   "Generating PDF...",
+    photoTooLarge:  "Image too large (max 2 MB).",
     export:         "Export",
     import:         "Import",
     livePreview:    "Live Preview",
@@ -387,6 +417,9 @@ export const I18N = {
     font:           "Font",
     density:        "Text density",
     interfaceLang:  "Interface language",
+    themeMode:      "Preview theme",
+    themeLight:     "Light",
+    themeDark:      "Dark",
     fontClassic:    "Classic",
     fontClassicHint:"Playfair + Source Sans",
     fontModern:     "Modern",
@@ -480,6 +513,16 @@ export const I18N = {
     errName:  "Name is required.",
     errTitle: "Title is required.",
     errEmail: "Invalid email.",
+    errEmailRequired: "Email is required.",
+    tplClassic:    "Classic",
+    tplModern:     "Modern",
+    tplMinimal:    "Minimal",
+    tplExecutive:  "Executive",
+    tplCreative:   "Creative",
+    tplTimeline:   "Timeline",
+    tplImpact:     "Impact",
+    tplAcademique: "Academic",
+    tplStartup:    "Startup",
     tplProfile:  "Profile",
     tplExp:      "Experience",
     tplExpPro:   "Professional Experience",

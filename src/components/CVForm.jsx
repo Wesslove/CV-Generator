@@ -11,7 +11,7 @@
 import React, { useState } from "react"
 
 import BulletsEditor from "./cvForm/BulletsEditor"
-import { TEMPLATES, STYLE_PRESETS, getDensityOptions, getFontOptions, getLangLevels, getSkillLevels } from "../constants"
+import { getTemplates, STYLE_PRESETS, getDensityOptions, getFontOptions, getLangLevels, getSkillLevels } from "../constants"
 import DraggableSection from "./cvForm/dnd/DraggableSection"
 import SortableCard from "./cvForm/dnd/SortableCard"
 import Accordion from "./cvForm/ui/Accordion"
@@ -21,7 +21,7 @@ import RemoveBtn from "./cvForm/ui/RemoveBtn"
 
 export default function CVForm({
   cvData, errors = {}, completionScore, completionChecks,
-  canUndo, onUndo,
+  canUndo, canRedo, onUndo, onRedo, onReset,
   onChange, onBlur, onPhoto, onAdd, onUpdate, onRemove, onDuplicate, onReorder,
   onTemplateChange, onAddCustomSection, onUpdateCustomSection,
   onRemoveCustomSection, onAddCustomItem, onRemoveCustomItem,
@@ -39,19 +39,7 @@ export default function CVForm({
   const DENSITY_OPTIONS = getDensityOptions(t)
   const LANG_LEVELS = getLangLevels(t)
   const SKILL_LEVELS = getSkillLevels(t)
-
-  // Labels lisibles pour les templates
-  const TPL_LABELS = {
-    classic:    "Classic",
-    modern:     "Modern",
-    minimal:    "Minimal",
-    executive:  "Executive",
-    creative:   "Creative",
-    timeline:   "Timeline",
-    impact:     "Impact",
-    academique: "Académique",
-    startup:    "Startup",
-  }
+  const TEMPLATE_LIST = getTemplates(t)
 
   return (
     <div className="cv-form">
@@ -63,6 +51,11 @@ export default function CVForm({
               <path d="M3 7v6h6"/><path d="M3 13C5 7 11 3 18 5a9 9 0 010 14c-4 1.5-8 1-11-1"/>
             </svg>
             {t("undo")}
+          </button>
+        )}
+        {canRedo && (
+          <button className="undo-btn" onClick={onRedo} title="Ctrl+Shift+Z">
+            {t("redo")}
           </button>
         )}
       </div>
@@ -79,14 +72,13 @@ export default function CVForm({
       <div className="mobile-template-switcher">
         <span className="mobile-template-label">{t("template")}</span>
         <div className="mobile-template-btns">
-          {TEMPLATES.map((tpl) => (
+          {TEMPLATE_LIST.map((tpl) => (
             <button
-              key={tpl.id ?? tpl}
-              className={`tpl-btn-light ${cvData.template === (tpl.id ?? tpl) ? "active" : ""}`}
-              onClick={() => onTemplateChange && onTemplateChange(tpl.id ?? tpl)}
+              key={tpl.id}
+              className={`tpl-btn-light ${cvData.template === tpl.id ? "active" : ""}`}
+              onClick={() => onTemplateChange && onTemplateChange(tpl.id)}
             >
-              {/* FIX 2b — pas de tpl-thumb ici pour éviter les cases grises */}
-              {TPL_LABELS[tpl.id ?? tpl] ?? (tpl.label ?? String(tpl))}
+              {tpl.label}
             </button>
           ))}
         </div>
@@ -186,6 +178,25 @@ export default function CVForm({
           </select>
         </div>
         <div className="field-group">
+          <label className="field-label">{t("themeMode")}</label>
+          <div className="theme-options">
+            <button
+              type="button"
+              className={`theme-btn ${(cvData.settings.theme || "light") === "light" ? "active" : ""}`}
+              onClick={() => updateSettings("theme", "light")}
+            >
+              {t("themeLight")}
+            </button>
+            <button
+              type="button"
+              className={`theme-btn ${cvData.settings.theme === "dark" ? "active" : ""}`}
+              onClick={() => updateSettings("theme", "dark")}
+            >
+              {t("themeDark")}
+            </button>
+          </div>
+        </div>
+        <div className="field-group">
           <label className="field-label">
             <input
               type="checkbox"
@@ -207,6 +218,11 @@ export default function CVForm({
             {t("printDenseMode")}
           </label>
         </div>
+        {onReset && (
+          <button type="button" className="reset-cv-btn" onClick={onReset}>
+            {t("resetCv")}
+          </button>
+        )}
       </div>
 
       {/* ── Informations personnelles ── */}

@@ -1,12 +1,5 @@
 /**
  * PreviewToolbar
- * Rôle : rend la barre d'actions de l'apercu (zoom/actions).
- * Entrées : etat du zoom, flags de validation, callbacks, traducteur.
- * Sorties : UI de barre d'outils et actions utilisateur propagees au parent.
- * Responsabilités :
- * - controler zoom plus/moins/reset
- * - declencher les actions undo/pdf/export/import
- * - heberger la liaison ref de l'input import fichier
  */
 import React from "react"
 
@@ -17,8 +10,12 @@ export default function PreviewToolbar({
   onZoomIn,
   onZoomReset,
   onUndo,
+  onRedo,
   canUndo,
+  canRedo,
   onPrintPdf,
+  onExportNativePdf,
+  pdfExporting,
   hasErrors,
   onExportJson,
   onImportClick,
@@ -26,37 +23,19 @@ export default function PreviewToolbar({
   importRef,
 }) {
   return (
-    <div id="app-preview-controls" className="flex items-center justify-between px-6 py-3 border-b border-zinc-200 bg-white">
-      <span className="text-[13px] text-zinc-400 font-medium">{t("livePreview")}</span>
+    <div id="app-preview-controls">
+      <span className="preview-toolbar-label">{t("livePreview")}</span>
 
-      <div className="flex items-center gap-1 bg-zinc-100 border border-zinc-200 rounded-lg px-1.5 py-[3px]">
-        <button
-          className="w-[26px] h-[26px] border-none bg-transparent text-zinc-900 text-base font-semibold cursor-pointer rounded-md flex items-center justify-center hover:bg-zinc-200 transition-colors leading-none"
-          onClick={onZoomOut}
-          title={t("zoomOut")}
-        >
-          -
-        </button>
-        <span className="text-[13px] font-semibold text-zinc-900 min-w-[38px] text-center select-none">{zoom}%</span>
-        <button
-          className="w-[26px] h-[26px] border-none bg-transparent text-zinc-900 text-base font-semibold cursor-pointer rounded-md flex items-center justify-center hover:bg-zinc-200 transition-colors leading-none"
-          onClick={onZoomIn}
-          title={t("zoomIn")}
-        >
-          +
-        </button>
-        <button
-          className="w-[26px] h-[26px] border-none bg-transparent text-zinc-900 text-sm font-semibold cursor-pointer rounded-md flex items-center justify-center hover:bg-zinc-200 transition-colors leading-none"
-          onClick={onZoomReset}
-          title={t("zoomReset")}
-        >
-          R
-        </button>
+      <div className="zoom-controls">
+        <button className="zoom-btn" onClick={onZoomOut} title={t("zoomOut")} aria-label={t("zoomOut")}>-</button>
+        <span className="zoom-pct">{zoom}%</span>
+        <button className="zoom-btn" onClick={onZoomIn} title={t("zoomIn")} aria-label={t("zoomIn")}>+</button>
+        <button className="zoom-btn" onClick={onZoomReset} title={t("zoomReset")} aria-label={t("zoomReset")}>R</button>
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="preview-actions">
         <button
-          className="flex items-center gap-2 px-[18px] py-2 rounded-lg text-sm font-semibold transition-colors duration-200 cursor-pointer bg-slate-100 hover:bg-slate-200 text-slate-700 border border-zinc-200 disabled:opacity-40 disabled:cursor-not-allowed"
+          className="toolbar-btn"
           onClick={onUndo}
           disabled={!canUndo}
           title={`${t("undo")} (Ctrl+Z)`}
@@ -64,7 +43,15 @@ export default function PreviewToolbar({
           {t("undo")}
         </button>
         <button
-          className="flex items-center gap-2 px-[18px] py-2 bg-blue-600 hover:bg-blue-700 active:scale-[0.97] text-white border-none rounded-lg cursor-pointer text-sm font-semibold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="toolbar-btn"
+          onClick={onRedo}
+          disabled={!canRedo}
+          title={`${t("redo")} (Ctrl+Shift+Z)`}
+        >
+          {t("redo")}
+        </button>
+        <button
+          className="toolbar-btn toolbar-btn-primary"
           onClick={onPrintPdf}
           disabled={hasErrors}
           title={t("downloadPdf")}
@@ -72,17 +59,17 @@ export default function PreviewToolbar({
           {t("downloadPdf")}
         </button>
         <button
-          className="flex items-center gap-2 px-[18px] py-2 rounded-lg text-sm font-semibold transition-colors duration-200 cursor-pointer bg-slate-100 hover:bg-slate-200 text-slate-700 border border-zinc-200"
-          onClick={onExportJson}
-          title={t("export")}
+          className="toolbar-btn"
+          onClick={onExportNativePdf}
+          disabled={hasErrors || pdfExporting}
+          title={t("downloadPdfNative")}
         >
+          {pdfExporting ? t("pdfExporting") : t("downloadPdfNative")}
+        </button>
+        <button className="toolbar-btn" onClick={onExportJson} title={t("export")}>
           {t("export")}
         </button>
-        <button
-          className="flex items-center gap-2 px-[18px] py-2 rounded-lg text-sm font-semibold transition-colors duration-200 cursor-pointer bg-slate-100 hover:bg-slate-200 text-slate-700 border border-zinc-200"
-          onClick={onImportClick}
-          title={t("import")}
-        >
+        <button className="toolbar-btn" onClick={onImportClick} title={t("import")}>
           {t("import")}
         </button>
         <input ref={importRef} type="file" accept=".json" onChange={onImportJson} hidden />

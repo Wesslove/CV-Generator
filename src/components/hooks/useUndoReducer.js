@@ -1,24 +1,12 @@
 /**
  * useUndoReducer
- * Rôle : ajoute des capacites d'historique undo par-dessus un reducer.
- * Entrées : fonction reducer + etat initial.
- * Sorties : [state, dispatch, undo, canUndo, commitToHistory].
- * Responsabilités :
- * - stocker l'etat reducer et la pile d'historique
- * - exposer l'action undo and availability flag
- * - creer des checkpoints explicites avec commitToHistory
+ * Rôle : ajoute undo/redo par-dessus un reducer.
  */
 
 import { useState, useCallback } from "react"
 
-// Nombre maximum d'états sauvegardés dans l'historique.
-// Augmenter = plus de mémoire utilisée.
 const MAX_HISTORY = 30
 
-// Ces actions sont trop granulaires pour l'historique
-// (une frappe par lettre = trop de snapshots).
-// Elles mettent à jour l'état mais sans créer de checkpoint.
-// Le checkpoint est créé sur "blur" (onBlur) via commitToHistory.
 const SKIP_UNDO = new Set([
   "SET_FIELD",
   "UPDATE_ITEM",
@@ -26,56 +14,62 @@ const SKIP_UNDO = new Set([
   "UPDATE_CUSTOM_ITEM",
 ])
 
-/**
- * @param {function} reducerFn  - Le reducer à utiliser
- * @param {object}   initial    - L'état initial
- * @returns {[state, dispatch, undo, canUndo, commitToHistory]}
- */
 export function useUndoReducer(reducerFn, initial) {
   const [history, setHistory] = useState({
-    past:    [],      // Liste des états précédents
-    present: initial, // État actuel
+    past: [],
+    present: initial,
+    future: [],
   })
 
-  // dispatch : envoie une action au reducer
   const dispatch = useCallback(
     (action) => {
       setHistory((h) => {
         const next = reducerFn(h.present, action)
 
         if (SKIP_UNDO.has(action.type)) {
-          // Mise à jour silencieuse : pas de checkpoint
-          return { ...h, present: next }
+          return { ...h, present: next, future: [] }
         }
 
-        // Checkpoint : sauvegarde l'état avant la modification
         const past = [...h.past, h.present].slice(-MAX_HISTORY)
-        return { past, present: next }
+        return { past, present: next, future: [] }
       })
     },
     [reducerFn]
   )
 
-  // undo : revient à l'état précédent
   const undo = useCallback(() => {
     setHistory((h) => {
-      if (h.past.length === 0) return h // Rien à annuler
+      if (h.past.length === 0) return h
       const past = [...h.past]
       const previous = past.pop()
-      return { past, present: previous }
+      const future = [h.present, ...h.future].slice(0, MAX_HISTORY)
+      return { past, present: previous, future }
     })
   }, [])
 
-  // commitToHistory : crée manuellement un checkpoint
-  // Appelé sur onBlur pour sauvegarder après la saisie
+  const redo = useCallback(() => {
+    setHistory((h) => {
+      if (h.future.length === 0) return h
+      const future = [...h.future]
+      const next = future.shift()
+      const past = [...h.past, h.present].slice(-MAX_HISTORY)
+      return { past, present: next, future }
+    })
+  }, [])
+
   const commitToHistory = useCallback(() => {
     setHistory((h) => {
       const past = [...h.past, h.present].slice(-MAX_HISTORY)
-      return { ...h, past }
+      return { ...h, past, future: [] }
     })
   }, [])
 
-  const canUndo = history.past.length > 0
+  const resetHistory = useCallback((nextState) => {
+    setHistory({ past: [], present: nextState, future: [] })
+  }, [])
 
-  return [history.present, dispatch, undo, canUndo, commitToHistory]
+  const canUndo = history.past.length > 0
+  const canRedo = history.future.length > 0
+
+  return [history.present, dispatch, undo, redo, canUndo, canRedo, commitToHistory, resetHistory]
 }
